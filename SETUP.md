@@ -78,18 +78,13 @@ Create the wiki folder first if it doesn't exist.
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
    `wiki/conversations/`, `wiki/other/`.
 3. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
-4. **Make sure Python works.** The custom version needs it — PDF text extraction and
-   `scan_interests.py` both run on Python. Run `python --version`, and on Windows `py --version`
-   too, and accept a launcher only when it prints a real version string: on Windows without
-   Python, the Microsoft Store execution alias answers `python` with a store prompt and exit code
-   9009, which is not an installation. Record which launcher works — later steps use its name.
-   If neither answers, ask to install Python. You cannot install it without their approval, so
-   ask plainly and give the reason: it is needed here, and it is reusable for PDF work, data
-   analysis, and later research automation. Use Python's current official installer or the OS
-   package manager, then re-check that the launcher prints a version.
-   If the user declines, or cannot install (a managed work machine, for example), stop rather
-   than half-finishing: say that the custom version needs Python, and offer the original version
-   from Step 2a instead — it needs no Python at all.
+4. **Make sure Python works** — PDF extraction and `scan_interests.py` both need it. Run
+   `python --version` (`py --version` on Windows) and accept a launcher only when it prints a
+   version string: on Windows without Python, the Microsoft Store alias answers `python` with a
+   store prompt and exit code 9009. Remember which launcher works; later steps use its name.
+   If neither answers, ask to install Python and do it — the user has to approve the command, so
+   just ask. If they cannot install at all, offer the original version from Step 2a, which needs
+   no Python.
 5. Create an empty `index.md` with the category headings.
 
 ## Step 3 — Briefing system (both versions)

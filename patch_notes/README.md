@@ -8,7 +8,7 @@
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
-| 19:01 | [`8a9a088`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/8a9a088) | **확장판에 Python이 필요하다고 세팅에서 먼저 확인합니다.** 그전엔 아무 말 없이 있다고 치고 넘어가서, 없는 사람은 첫 논문을 넣을 때 `pip3 install pypdf`에서 처음 막혔습니다. 이제 세팅 중에 실행기를 확인하고, 없으면 설치할지 묻습니다(승인 없이는 설치하지 않습니다). 설치가 막힌 컴퓨터면 Python이 필요 없는 원본판으로 안내하고 멈춥니다. Windows에서는 버전 문자열이 실제로 찍혀야 통과로 봅니다 — Python이 없어도 스토어 별칭이 `python`에 응답하기 때문입니다. 논문 넣기 예제의 `pip3`·`python3`도 확인된 실행기를 쓰도록 고쳤습니다 |
+| 19:01 | [`8a9a088`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/8a9a088) | **Python을 세팅에서 먼저 확인합니다.** 그전엔 있다고 치고 넘어가서, 없는 사람은 첫 논문을 넣을 때 `pip3 install pypdf`에서 처음 막혔습니다. 이제 세팅 중에 확인하고 없으면 물어본 뒤 깔아 줍니다. Windows에서는 버전이 실제로 찍혀야 통과로 봅니다 — Python이 없어도 스토어 별칭이 `python`에 응답하기 때문입니다. 논문 넣기 예제의 `pip3`·`python3`도 확인된 실행기를 쓰도록 고쳤습니다 |
 | 18:50 | [`af9493e`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/af9493e) | **세팅할 때 브리핑 권한을 물어봅니다.** 무인 실행 중 권한을 물으면 아무도 답하지 않아 그대로 멈춥니다. 이제 "이 폴더 안에서 파일 읽기·쓰기, PubMed 검색, 스크립트 실행 권한을 미리 열까요?"를 세팅 중에 묻고, 허락하면 `Bash`를 통째로 엽니다 — `Bash(curl *)` 같은 패턴은 복합 명령을 파서가 못 읽어서 결국 물어봅니다. 예약도 일회성이 아니라 반복으로 만들어 대화가 사이드바에 남습니다 |
 | 18:43 | [`1814a07`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/1814a07) | **브리핑을 표가 아니라 글로 씁니다.** 필수 항목을 표로 적어놨더니 그대로 라벨 붙은 불릿으로 나와서 읽기가 딱딱했습니다. 이제 제목 아래 저널·날짜·링크 한 줄, 그다음 "어떤 논문인가"와 "왜 골랐나"를 짧은 문단 두 개로 씁니다 |
 | 18:19 | [`bd8e326`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/bd8e326) | **브리핑이 권한 프롬프트에서 멈추던 문제.** 예약 실행은 자리를 비운 사이에 도는데 권한을 물으면 아무도 답하지 않아 그대로 멈췄습니다 — 파일도 안 쓰고 알림도 안 가고 이유도 안 남습니다. 이제 세팅 중에 `{위키}/.claude/settings.json`으로 필요한 도구를 미리 허용하고, 사용자가 보는 앞에서 한 번 돌려 성공을 확인합니다 |
