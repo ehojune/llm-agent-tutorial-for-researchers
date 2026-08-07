@@ -7,8 +7,10 @@ Aim for **5 papers, quickly**. This is a morning glance, not a literature review
 alone — that is what keeps it fast — then read the abstracts of the five finalists only, so the
 lines you write about them are true. Five abstracts costs one request.
 
-1. Refresh the interest profile: run `python scan_interests.py` if it exists (on failure, carry on
-   with the existing file). Then read `briefing/interests.md` and build the topic list:
+1. Refresh the interest profile: run `python scan_interests.py` if it exists (`py` on Windows).
+   On failure, carry on with the existing file, but report the failure at the end — the custom
+   version needs a working Python, so this is a repair to flag, not something to work around by
+   recomputing the profile by hand. Then read `briefing/interests.md` and build the topic list:
    - every bullet under **`## Manual queries`** — always included, these are the backbone
    - the top ~6 from the AUTO block, in score order
    - drop anything matching a bullet under **`## Excluded topics`**, both as a query and later as
