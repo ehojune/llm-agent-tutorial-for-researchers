@@ -154,6 +154,7 @@ Create the wiki folder first if it doesn't exist.
        "defaultMode": "acceptEdits",
        "allow": [
          "Bash",
+         "PowerShell",
          "Read",
          "Write",
          "Edit",
@@ -165,6 +166,10 @@ Create the wiki folder first if it doesn't exist.
      }
    }
    ```
+
+   **Include `PowerShell`, not just `Bash`.** On Windows the briefing's PubMed loop runs through
+   the PowerShell tool, so a `Bash`-only allow list leaves it prompting on every run — and because
+   that loop is a multi-line script, the prompt offers only "한 번만 허용", never "항상 허용".
 
    **Grant `Bash` as a whole, not command patterns.** Rules like `Bash(curl *)` look tidier and do
    not work: the briefing builds compound commands (`cd … && cat > file <<'EOF'`, pipelines), the
