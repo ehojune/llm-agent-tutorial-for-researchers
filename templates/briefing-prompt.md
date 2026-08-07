@@ -3,6 +3,20 @@
 Run from the wiki root. `{CHANNEL}` was set during setup. Web access is allowed for this task
 only (PubMed E-utilities); it never overrides the wiki's other rules.
 
+## Keep every command approvable
+
+This task runs while nobody is watching, so a permission prompt is a stall. Shape the commands so
+they can be pre-approved:
+
+- **Never write a file through a shell heredoc.** No `cat > x.py <<'EOF'`. Build scripts with the
+  Write tool, then run the file as its own command (`{PYTHON} x.py`). A heredoc carrying Python is
+  one long compound command that no allow rule can match, and a brace holding quoted strings —
+  `{"a","b"}` — trips the shell's expansion-obfuscation check, which prompts regardless of what the
+  allow list says.
+- **One plain command per call, and no `cd` prefix.** The task already starts in the wiki root.
+  `cd … && …` and `…; …` are compound: their permission prompt offers only "allow once", so an
+  approval for them never carries to the next run.
+
 Aim for **5 papers, quickly**. This is a morning glance, not a literature review. Screen on titles
 alone — that is what keeps it fast — then read the abstracts of the five finalists only, so the
 lines you write about them are true. Five abstracts costs one request.
