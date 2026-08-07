@@ -33,6 +33,7 @@ BASE_WEIGHT = {
     "seminar": 1.5,          # seminar / talk
     "project_meeting": 1.5,  # project meeting (active work)
     "textbook_study": 0.5,   # textbook chapter study + memo
+    "news": 0.3,             # press coverage — a lead, not evidence
     "routine_meeting": 0.1,  # routine / recurring meeting (low signal)
     "conversation": 0.1,     # general conversation log (placeholder)
 }
@@ -47,6 +48,7 @@ KIND_LABEL = {
     "routine_meeting": "routine_meeting",
     "textbook_study": "textbook_study",
     "conversation": "conversation",
+    "news": "news",
 }
 HALFLIFE_YEARS = 3.0          # score halves every 3 years of age
 TOP_QUERIES = 10              # how many topics to push into the briefing list
