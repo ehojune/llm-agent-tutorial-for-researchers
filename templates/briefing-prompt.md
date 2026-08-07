@@ -97,9 +97,15 @@ lines you write about them are true. Five abstracts costs one request.
    Everything else about the run stays available on request — if the user asks how it searched,
    tell them then.
 
-5. Deliver via **{CHANNEL}**:
-   - **desktop**: send a push notification, e.g. "논문 브리핑: 5편 — 오늘의 pick: {top title}"
-     (notification text in the user's language; paper titles stay English).
+5. Deliver via **{CHANNEL}**. Whichever channel it is, **the briefing body has to reach the user
+   somewhere other than the file** — `briefings/{YYYY-MM-DD}.md` is the archive, not the delivery.
+
+   - **desktop**: the session is the delivery. Write the briefing out in your reply — the same
+     five entries and the overall read, not a report that a file was written — because that reply
+     is what the user sees when they open the task from the notification. Then fire the push
+     notification as the ping, e.g. "논문 브리핑: 5편 — 오늘의 pick: {top title}" (notification
+     text in the user's language; paper titles stay English). A one-line notification plus a reply
+     saying the file is ready leaves the user two clicks from what they asked for.
    - **email**: send the briefing body to the user's address with the connected email tool.
    - **slack**: post the briefing to the agreed channel or DM.
    - **notion**: create a page in the agreed database.
