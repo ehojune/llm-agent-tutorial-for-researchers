@@ -8,6 +8,7 @@
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
+| PENDING | [`PENDING`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/PENDING) | **루틴 권한의 진짜 해법은 권한 모드를 `자동`으로 두는 것이었습니다.** 폴더의 `.claude/settings.json`은 직접 여는 세션에만 걸리고 예약 실행에는 안 걸립니다. "항상 허용"도 답이 아니었습니다 — 명령 문자열을 통째로 저장하는데 브리핑 명령에는 매번 바뀌는 임시 폴더 경로와 그날의 검색어가 박혀 있어서, 규칙만 하루에 여섯 개씩 쌓이고 다음 실행은 또 묻습니다. 이제 세팅할 때 루틴의 권한 모드를 자동으로 잡고, README에는 확인할 세 가지(권한 모드 자동 · 폴더가 위키 폴더 · 지금 실행)만 남겼습니다. 설정 파일은 Claude가 알아서 씁니다 |
 | 20:37 | [`34e2e8c`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/34e2e8c) | **브리핑이 승인 가능한 형태로만 명령을 짭니다.** 힙독(`cat > x.py <<EOF`)으로 스크립트를 쓰면 명령 하나가 통째로 길어져 어떤 허용 규칙에도 안 걸리고, 따옴표를 품은 중괄호 `{"a","b"}`는 셸 보안 검사에 걸려 허용 목록과 무관하게 매번 물어봅니다. 이제 스크립트는 Write 도구로 만들고 `python x.py`로 따로 실행하며, `cd … &&` 접두사도 쓰지 않습니다 |
 | 20:28 | [`8fbdcfd`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/8fbdcfd) | **Windows에서 권한 목록에 `PowerShell`을 넣습니다.** `Bash`만 열어두면 PubMed 검색 루프가 매번 권한을 묻습니다 — Windows에서 그 루프는 PowerShell 도구로 돌기 때문입니다. 여러 줄 스크립트라 "항상 허용"도 안 뜨고 "한 번만 허용"만 나옵니다 |
 | 20:12 | [`5c701d0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/5c701d0) | **루틴 권한은 처음 한 번만 잡으면 됩니다.** 매일 "권한 무시"를 누르라고 적었던 앞 커밋을 뒤집었습니다. 공식 문서대로 상세 페이지에서 **지금 실행**을 누르고 프롬프트마다 **항상 허용**을 고르면 다음 실행부터 안 묻습니다. 매번 묻던 진짜 원인은 루틴의 **폴더가 위키 폴더가 아니라 상위 폴더**였던 것 — 그러면 위키의 `.claude/settings.json`이 안 읽히고 명령마다 `cd`가 붙어 복합 명령이 되는 탓에 "항상 허용" 선택지 자체가 안 뜹니다 |

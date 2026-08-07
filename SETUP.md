@@ -40,7 +40,9 @@ Notes before you start:
 4. What time each day the paper briefing should run (e.g. 09:00).
 5. How to receive it — explain the trade-offs briefly:
    - **Desktop notification** (recommended, zero setup): the Claude Desktop scheduled task fires
-     an OS notification and the briefing text is in the session + a file.
+     an OS notification and the briefing text is in the session + a file. If they pick this, tell
+     them now that the briefing runs as a **루틴** and that its permissions are a one-time setup you
+     will walk them through at the end (steps 7–9) — not a daily click.
    - **Email**: needs the user's own email connector (e.g. Gmail MCP); sent from their account.
      There is no built-in "no-reply" mail from Anthropic.
    - **Slack**: needs a Slack MCP connector.
@@ -138,8 +140,11 @@ Create the wiki folder first if it doesn't exist.
    missed briefings.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
-6. **Ask for the permissions the briefing needs, and ask now.** This step decides whether the
-   briefing ever runs unattended. Put the question to the user in their own language, roughly:
+6. **Ask for the permissions the briefing needs, and ask now.** This settings file covers sessions
+   the user opens in the wiki folder themselves ("브리핑 해줘", ingesting a PDF). What the
+   *scheduled* runs do is governed by the task's own permission mode in step 7 — the two are
+   separate, and this file alone will not make an unattended run silent. Put the question to the
+   user in their own language, roughly:
 
    > 브리핑은 매일 아침 자리에 안 계실 때 도는 작업입니다. 그때 권한을 물어보면 아무도 답하지
    > 않아 그대로 멈추고, 파일도 알림도 남지 않습니다. **이 위키 폴더 안에서** 파일을 읽고 쓰고,
@@ -167,26 +172,26 @@ Create the wiki folder first if it doesn't exist.
    }
    ```
 
-   **Include `PowerShell`, not just `Bash`.** On Windows the briefing's PubMed loop runs through
-   the PowerShell tool, so a `Bash`-only allow list leaves it prompting on every run — and because
-   that loop is a multi-line script, the prompt offers only "한 번만 허용", never "항상 허용".
+   **Include `PowerShell`, not just `Bash`.** On Windows the briefing's PubMed work runs through
+   the PowerShell tool, so a `Bash`-only list leaves it prompting.
 
-   **Grant `Bash` as a whole, not command patterns.** Rules like `Bash(curl *)` look tidier and do
-   not work: the briefing builds compound commands (`cd … && cat > file <<'EOF'`, pipelines), the
-   permission parser cannot parse those, and an unparseable command falls through to a prompt no
-   matter what the allow list says. A pattern list produces a briefing that halts some mornings
-   and not others, which is worse than either extreme.
+   **Grant each tool as a whole, not command patterns.** Rules like `Bash(curl *)` look tidier and
+   do not work: the briefing builds compound commands and pipelines, and a rule has to match every
+   subcommand independently, so a pattern list halts some mornings and not others.
 
-   The grant is scoped to this folder, so it changes nothing anywhere else on the machine. If the
-   user would rather not, say plainly that the briefing will then need them present to click
-   through, and that "브리핑 해줘" on demand is the realistic mode.
+   The grant is scoped to this folder, so it changes nothing anywhere else on the machine.
 
    If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
 
 7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): **recurring, daily** at
    the chosen time, working directory = **the wiki folder itself**, instruction:
-   *"Open briefing/PROMPT.md in this folder and follow it."* The folder is what makes the
-   permissions in step 6 apply at all — step 9 explains what breaks when it points at a parent.
+   *"Open briefing/PROMPT.md in this folder and follow it."*
+   - **Set the task's permission mode to 자동 (auto)** in the same form, next to the model picker.
+     This is what makes unattended runs actually run. In Manual or 편집 자동 수락 the task stops at
+     a permission prompt on every shell command, and step 9 explains why the other workarounds
+     don't hold. Auto mode isn't a bypass: a classifier vets each action in the background and
+     blocks the dangerous ones. If the picker doesn't offer 자동, this account or model can't use
+     it — say so plainly and fall back to 편집 자동 수락, warning that mornings will stall.
    - **Recurring, not one-shot — including when you are only testing.** A one-shot task disables
      itself the moment it fires, and its session goes with it — the user reads the notification,
      looks at something else, comes back, and cannot find the briefing conversation again. A
@@ -197,27 +202,28 @@ Create the wiki folder first if it doesn't exist.
      the user the schedule needs the Claude Desktop app; meanwhile "브리핑 해줘" runs it on
      demand.
 
-8. **Run it once now, with the user watching**, and check that it wrote `briefings/{today}.md`,
-   printed the briefing in the session, and fired the notification. Any tool the settings file
-   missed will prompt during this run; approving it here stores the approval on the task. A
-   schedule that has never completed once is not set up, it is only scheduled.
+8. **Run it once with the user watching**, using **Run now** (지금 실행) on the task's detail page,
+   and check that it asked for nothing, wrote `briefings/{today}.md`, printed the briefing in the
+   session, and fired the notification. A schedule that has never completed once is not set up, it
+   is only scheduled. If it does prompt, fix it here — step 9 lists what to check.
 
-9. **Prime the task's permissions with "Run now", and check its folder.** Do this instead of
-   telling the user to click **권한 무시** every day; bypass mode turns off the safety checks
-   entirely and the docs reserve it for containers and VMs.
-   - **The task's folder must be the wiki folder itself**, not a parent. Two things break when
-     it's a parent: the wiki's `.claude/settings.json` never loads, and every command needs a
-     `cd …;` prefix, which makes it a compound command — those offer only "한 번만 허용", never
-     "항상 허용". The run then prompts forever. Verify the folder on the task's detail page.
-   - Click **Run now** (지금 실행) on the detail page and answer each permission prompt with
-     **always allow** (항상 허용). Future runs of that task auto-approve the same tools without
-     prompting; the saved approvals are listed under **항상 허용됨** on the same page, where they
-     can also be revoked. Prefer a stable command shape over a one-off — an approval saved for
-     one exact PubMed URL won't match tomorrow's query.
+9. **When a scheduled run keeps prompting**, work through these in order. Every one of them was a
+   real cause on a real setup.
+   - **The task's permission mode is not 자동.** This is the fix; the rest are refinements. Set it
+     in the task's Edit form, not in the session's mode selector — the selector applies to that one
+     session, so a mode set there looks fixed and is back to Manual tomorrow.
+   - **The task's folder is a parent of the wiki**, not the wiki itself. Then every command needs a
+     `cd …;` prefix, which makes it compound, and compound commands can't be pre-approved.
+   - **Do not lean on "항상 허용" for this workload.** It saves the command string verbatim, and the
+     briefing's commands carry a per-run scratchpad path and the day's PubMed query inside the URL.
+     Tomorrow's command is a different string, so the list grows by half a dozen entries a day and
+     never covers the next run.
+   - **Do not tell the user to click 권한 무시 daily.** It disables the safety checks entirely and
+     the docs reserve it for containers and VMs.
    - Reference: <https://code.claude.com/docs/en/desktop-scheduled-tasks#permissions-for-scheduled-tasks>.
-   Say plainly why it is safe here: the briefing only scans the wiki folder, searches PubMed, and
-   writes `briefings/{date}.md`. And say plainly that it is a daily chore for now — routing the
-   briefing to Slack or email later removes the need to check in at all.
+
+   Tell the user what the routine is allowed to do and why it is safe: it scans the wiki folder,
+   searches PubMed, and writes `briefings/{date}.md`. Nothing leaves the machine.
 
 10. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
     minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
@@ -311,9 +317,11 @@ Then close with a short tour **in the user's language**:
   If yes, create the first entry right away.
 - **Asking questions**: answers come only from ingested papers; if none exists, Claude says so
   and asks for the PDF. Good answers can be saved as overview pages ("이거 overview로 저장해줘").
-- **Routine permissions**: tell them it is a one-time setup, not a daily chore — 사이드바 루틴 →
-  브리핑 → **지금 실행**, and **항상 허용** on any prompt. The task's detail page shows the folder
-  and the saved approvals (**항상 허용됨**) if a run ever starts stalling again.
+- **Routine permissions**: one-time setup, not a daily chore. Show them the task's detail page and
+  name the three things to check if a morning ever comes up empty: the permission mode is 자동
+  (set in the Edit form, not the session selector), the folder is the wiki folder, and **지금 실행**
+  runs it on demand — 항상 허용 on the first prompts is normal. Say plainly that you already wrote
+  the settings file for them and they never need to edit JSON.
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.
