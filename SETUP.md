@@ -179,7 +179,10 @@ Create the wiki folder first if it doesn't exist.
    do not work: the briefing builds compound commands and pipelines, and a rule has to match every
    subcommand independently, so a pattern list halts some mornings and not others.
 
-   The grant is scoped to this folder, so it changes nothing anywhere else on the machine.
+   **What this scopes, and what it doesn't.** The file only decides which tool calls skip the
+   prompt while working in this folder — no other folder's sessions are affected. It is not a
+   sandbox: an approved `Bash` or `PowerShell` call can still reach any path the user's account
+   can. Say that plainly rather than implying the grant confines Claude to the wiki.
 
    If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
 
@@ -222,8 +225,9 @@ Create the wiki folder first if it doesn't exist.
      the docs reserve it for containers and VMs.
    - Reference: <https://code.claude.com/docs/en/desktop-scheduled-tasks#permissions-for-scheduled-tasks>.
 
-   Tell the user what the routine is allowed to do and why it is safe: it scans the wiki folder,
-   searches PubMed, and writes `briefings/{date}.md`. Nothing leaves the machine.
+   Tell the user what the routine actually does: it scans the wiki folder, queries PubMed, and
+   writes `briefings/{date}.md`. The only thing it sends out is a PubMed search — plus the briefing
+   itself, if they chose email, Slack, or Notion. Wiki files are never uploaded anywhere.
 
 10. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
     minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
@@ -299,7 +303,7 @@ and say so rather than appending a second copy.
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
 and `briefing/PROMPT.md` written · permissions asked about, and `.claude/settings.json` written
 if granted · scheduled task registered **as recurring**, pointed at the wiki folder, and **run
-once successfully** via Run now with always-allow answers · humanizer
+once successfully** via Run now **with no permission prompt at all** · humanizer
 installed, with its scope chosen and the block appended
 (or automatic application explicitly declined).
 
@@ -320,8 +324,8 @@ Then close with a short tour **in the user's language**:
 - **Routine permissions**: one-time setup, not a daily chore. Show them the task's detail page and
   name the three things to check if a morning ever comes up empty: the permission mode is 자동
   (set in the Edit form, not the session selector), the folder is the wiki folder, and **지금 실행**
-  runs it on demand — 항상 허용 on the first prompts is normal. Say plainly that you already wrote
-  the settings file for them and they never need to edit JSON.
+  runs it on demand. A run that stops to ask means one of the first two slipped. Say plainly that
+  you already wrote the settings file for them and they never need to edit JSON.
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.

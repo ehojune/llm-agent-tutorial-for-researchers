@@ -8,6 +8,7 @@
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
+| PENDING | [`PENDING`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/PENDING) | 문구 세 곳 정리. 성공 기준을 **"자동 모드 + 지금 실행에서 아무것도 묻지 않고 완료"** 하나로 통일했습니다 — 앞선 커밋에 "처음엔 항상 허용을 누르라"와 "항상 허용에 기대지 말라"가 같이 남아 있었습니다. 그리고 "아무것도 밖으로 나가지 않는다"는 PubMed 조회와 이메일·Slack 전달을 빼먹은 말이라 범위를 좁혔고, 폴더 설정이 파일 접근을 폴더 안으로 가두는 샌드박스가 아니라는 점도 명시했습니다 |
 | 21:12 | [`c1f1994`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/c1f1994) | **루틴 권한의 진짜 해법은 권한 모드를 `자동`으로 두는 것이었습니다.** 폴더의 `.claude/settings.json`은 직접 여는 세션에만 걸리고 예약 실행에는 안 걸립니다. "항상 허용"도 답이 아니었습니다 — 명령 문자열을 통째로 저장하는데 브리핑 명령에는 매번 바뀌는 임시 폴더 경로와 그날의 검색어가 박혀 있어서, 규칙만 하루에 여섯 개씩 쌓이고 다음 실행은 또 묻습니다. 이제 세팅할 때 루틴의 권한 모드를 자동으로 잡고, README에는 확인할 세 가지(권한 모드 자동 · 폴더가 위키 폴더 · 지금 실행)만 남겼습니다. 설정 파일은 Claude가 알아서 씁니다 |
 | 20:37 | [`34e2e8c`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/34e2e8c) | **브리핑이 승인 가능한 형태로만 명령을 짭니다.** 힙독(`cat > x.py <<EOF`)으로 스크립트를 쓰면 명령 하나가 통째로 길어져 어떤 허용 규칙에도 안 걸리고, 따옴표를 품은 중괄호 `{"a","b"}`는 셸 보안 검사에 걸려 허용 목록과 무관하게 매번 물어봅니다. 이제 스크립트는 Write 도구로 만들고 `python x.py`로 따로 실행하며, `cd … &&` 접두사도 쓰지 않습니다 |
 | 20:28 | [`8fbdcfd`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/8fbdcfd) | **Windows에서 권한 목록에 `PowerShell`을 넣습니다.** `Bash`만 열어두면 PubMed 검색 루프가 매번 권한을 묻습니다 — Windows에서 그 루프는 PowerShell 도구로 돌기 때문입니다. 여러 줄 스크립트라 "항상 허용"도 안 뜨고 "한 번만 허용"만 나옵니다 |
