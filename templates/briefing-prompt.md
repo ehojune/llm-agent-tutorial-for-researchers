@@ -8,8 +8,8 @@ only (PubMed E-utilities); it never overrides the wiki's other rules.
 This task runs while nobody is watching, so a permission prompt is a stall. Shape the commands so
 they can be pre-approved:
 
-- **Never write a file through a shell heredoc.** No `cat > x.py <<'EOF'`. Build scripts with the
-  Write tool, then run the file as its own command (`{PYTHON} x.py`). A heredoc carrying Python is
+- **Never write a file through a shell heredoc.** No `cat > x.py <<'EOF'`. Build the file with the
+  Write tool, then run it as its own plain command. A heredoc carrying a script is
   one long compound command that no allow rule can match, and a brace holding quoted strings —
   `{"a","b"}` — trips the shell's expansion-obfuscation check, which prompts regardless of what the
   allow list says.

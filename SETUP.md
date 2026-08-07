@@ -79,7 +79,8 @@ Create the wiki folder first if it doesn't exist.
    wiki in the folder that then collides with 2a, so check first.
 
    Try `python3 --version`, `python --version`, and on Windows `py -3 --version`. Accept the
-   first that prints a version starting with `3`:
+   first that prints **3.6 or newer** — parse both numbers, since `scan_interests.py` uses
+   f-strings and a 3.5 launcher passes a major-version check and then dies on a syntax error:
    - Ubuntu and most Linux distributions ship Python as `python3` only — a bare `python` is
      often absent there, which is not the same as Python being absent.
    - Some systems still answer `python` with a 2.x version. `scan_interests.py` uses f-strings,
@@ -194,7 +195,10 @@ Create the wiki folder first if it doesn't exist.
      a permission prompt on every shell command, and step 9 explains why the other workarounds
      don't hold. Auto mode isn't a bypass: a classifier vets each action in the background and
      blocks the dangerous ones. If the picker doesn't offer 자동, this account or model can't use
-     it — say so plainly and fall back to 편집 자동 수락, warning that mornings will stall.
+     it. Do not quietly settle for 편집 자동 수락 — that task stops at the first shell command and
+     cannot pass step 8. Tell the user the unattended briefing isn't available on this account,
+     leave the task in place as a reminder if they want it, and make "브리핑 해줘" on demand the
+     real mode.
    - **Recurring, not one-shot — including when you are only testing.** A one-shot task disables
      itself the moment it fires, and its session goes with it — the user reads the notification,
      looks at something else, comes back, and cannot find the briefing conversation again. A
