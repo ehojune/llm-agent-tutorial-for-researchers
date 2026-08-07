@@ -1,7 +1,12 @@
 # 연구자를 위한 LLM 에이전트 튜토리얼
 
+[![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-D97757?logo=anthropic&logoColor=white)](https://claude.com/claude-code)
+[![패치노트](https://img.shields.io/badge/%ED%8C%A8%EC%B9%98%EB%85%B8%ED%8A%B8-changelog-5B5BD6)](patch_notes/README.md)
+
 논문 PDF를 개인 지식베이스(LLM Wiki)로 쌓고, 매일 정해진 시간에 관심사 기반 최신 논문
 브리핑까지 받는 세팅을 Claude에게 한 줄로 맡기는 튜토리얼입니다.
+
+바뀐 내용은 [패치노트](patch_notes/README.md)에서 확인하세요.
 
 ## 사용법 — 이게 전부입니다
 

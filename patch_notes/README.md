@@ -1,0 +1,29 @@
+# 패치노트
+
+이 저장소의 변경 이력입니다. 최신순.
+
+날짜·시간은 커밋 시각(KST)입니다. 커밋 해시를 누르면 실제 변경 내용을 볼 수 있습니다.
+
+## 2026-08-07
+
+| 시간 | 커밋 | 주요 변경사항 |
+|---|---|---|
+| 17:26 | [`b56a7ac`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/b56a7ac) | 브리핑이 최종 5편의 **초록을 읽고** 논문 설명을 씁니다. 그전엔 제목만 보고 추측했습니다. 스크리닝은 제목으로만 해서 속도는 그대로. 그리고 실행 로그(스캔 수, 검색 파라미터, 주제별 히트 수)를 브리핑 본문에서 **뺐습니다** — 너무 넓어 건너뛴 주제와 0건인 주제만 맨 아래 한 줄로 남깁니다 |
+| 17:13 | [`2f4e59f`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/2f4e59f) | 브리핑에 무엇이 들어가야 하는지 명시. 논문마다 영문 제목·저널·날짜·PubMed 링크·**무슨 논문인지**·**왜 골랐는지**, 그리고 마지막에 **전체 총평** 3~5줄 |
+| 17:11 | [`74bb504`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/74bb504) | 브리핑 본문을 **사용자 언어로** 씁니다. 위키의 영어 전용 규칙은 `sources/`와 `wiki/`에만 적용되고, 브리핑은 사람이 읽는 글이라 별개입니다. 논문 제목과 저널명은 영문 그대로 |
+| 16:54 | [`f87eb37`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/f87eb37) | 뉴스 기사 가중치를 0.3으로. 그전엔 뉴스도 논문과 같은 1.5라, 기사 한 편이 논문급으로 관심사를 밀어올렸습니다 |
+| 16:41 | [`71120f3`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/71120f3) | **브리핑 정확도 개선.** 검색어를 분야명이 아닌 2~3단어 구문으로 받고, 주제당 최신 4편만(`sort=date`), 3일 안에 150건 넘는 주제는 검색어가 아니라 분야명이므로 건너뛰기. `## Excluded topics` 추가 — "그건 추천하지 마"가 영구 반영됩니다 |
+| 16:41 | [`25e6361`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/25e6361) | **세팅을 막는 버그 2개 수정.** (1) 블록형 YAML 태그가 조용히 무시돼 해당 페이지가 관심사 집계에서 통째로 빠지던 문제 (2) 한글 Windows에서 PDF 텍스트 추출이 cp949 인코딩 오류로 죽던 문제 |
+| 14:07 | [`7fd12c8`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/7fd12c8) | 프로젝트 베이스 모듈 추가. 세팅 후 언제든 "프로젝트 베이스 만들어줘"로 GitHub 저장소나 Notion 페이지를 잡습니다 |
+| 13:59 | [`b916a96`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/b916a96) | 최초 공개. LLM Wiki + 데일리 논문 브리핑 한 줄 세팅 |
+
+---
+
+## 읽는 법
+
+- **16:41의 버그 2개**는 새로 세팅하는 사람만 밟습니다. 이미 쓰고 계신 위키에는 영향이 없습니다.
+- **16:41 이후의 변경은 전부 브리핑 품질** 이야기입니다. 세팅 절차 자체는 그대로입니다.
+- 이미 세팅을 마치셨다면, 브리핑 개선을 받으려면
+  [`templates/briefing-prompt.md`](../templates/briefing-prompt.md)를 다시 받아
+  `{위키폴더}/briefing/PROMPT.md`로 덮어쓰면 됩니다. Claude에게 "브리핑 프롬프트 최신으로
+  업데이트해줘"라고 해도 됩니다.
