@@ -40,7 +40,9 @@ Notes before you start:
 4. What time each day the paper briefing should run (e.g. 09:00).
 5. How to receive it — explain the trade-offs briefly:
    - **Desktop notification** (recommended, zero setup): the Claude Desktop scheduled task fires
-     an OS notification and the briefing text is in the session + a file.
+     an OS notification and the briefing text is in the session + a file. If they pick this, tell
+     them now that the briefing runs as a **루틴** and that its permissions are a one-time setup you
+     will walk them through at the end (steps 7–9) — not a daily click.
    - **Email**: needs the user's own email connector (e.g. Gmail MCP); sent from their account.
      There is no built-in "no-reply" mail from Anthropic.
    - **Slack**: needs a Slack MCP connector.
@@ -71,14 +73,36 @@ Create the wiki folder first if it doesn't exist.
 
 ### 2b. Custom version
 
-1. Fetch `templates/CLAUDE-custom.md`, fill in `[YOUR FIELD]` and the category table (5–10
-   categories proposed from the field, user-approved), and save it as `{wiki}/CLAUDE.md`.
-2. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
+1. **Find a Python 3 launcher — do this before creating any files.** PDF extraction and
+   `scan_interests.py` both need it, and if it turns out to be unavailable the fallback is the
+   original version in Step 2a. Falling back after writing `CLAUDE.md` leaves a half-built custom
+   wiki in the folder that then collides with 2a, so check first.
+
+   Try `python3 --version`, `python --version`, and on Windows `py -3 --version`. Accept the
+   first that prints **3.6 or newer** — parse both numbers, since `scan_interests.py` uses
+   f-strings and a 3.5 launcher passes a major-version check and then dies on a syntax error:
+   - Ubuntu and most Linux distributions ship Python as `python3` only — a bare `python` is
+     often absent there, which is not the same as Python being absent.
+   - Some systems still answer `python` with a 2.x version. `scan_interests.py` uses f-strings,
+     so a 2.x launcher fails after setup rather than during it.
+   - On Windows without Python, the Microsoft Store execution alias answers `python` with a store
+     prompt and exit code 9009 — no version line, so it fails this check as it should.
+
+   Call the winner `{PYTHON}`. It is substituted into the files written below, so the user's wiki
+   ends up with the launcher that actually works on their machine, not a generic `python`.
+
+   If none answers, ask to install Python and do it — the user has to approve the command, so
+   just ask. Re-run the probe afterwards to learn `{PYTHON}`. If they cannot install at all,
+   switch to the original version in Step 2a, which needs no Python.
+2. Fetch `templates/CLAUDE-custom.md`, fill in `[YOUR FIELD]`, the category table (5–10
+   categories proposed from the field, user-approved), and `{PYTHON}`, and save it as
+   `{wiki}/CLAUDE.md`.
+3. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
    `wiki/{each-category}/`, `wiki/overviews/`, `wiki/concepts/`, `wiki/seminars/`,
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
    `wiki/conversations/`, `wiki/other/`.
-3. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
-4. Create an empty `index.md` with the category headings.
+4. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
+5. Create an empty `index.md` with the category headings.
 
 ## Step 3 — Briefing system (both versions)
 
@@ -109,15 +133,19 @@ Create the wiki folder first if it doesn't exist.
    wiki they are all there is. (Original version: the AUTO block stays empty, which is fine.)
 3. Fetch `templates/briefing-prompt.md`, fill `{CHANNEL}` with the chosen channel and
    `{DESTINATION}` with the address/channel/database (`n/a` for desktop), and save it as
-   `{wiki}/briefing/PROMPT.md`.
+   `{wiki}/briefing/PROMPT.md`. Custom version: also fill `{PYTHON}` with the launcher found in
+   Step 2b. Original version: there is no scanner, so delete that clause of step 1 instead.
 4. Fetch `templates/wiki-extras.md`, fill `{BRIEFING_TIME}`, and **append it** to the rulebook
    (`CLAUDE.md` for custom, `AGENTS.md` for original). This adds three things: the automatic
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for
    missed briefings.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
-6. **Ask for the permissions the briefing needs, and ask now.** This step decides whether the
-   briefing ever runs unattended. Put the question to the user in their own language, roughly:
+6. **Ask for the permissions the briefing needs, and ask now.** This settings file covers sessions
+   the user opens in the wiki folder themselves ("브리핑 해줘", ingesting a PDF). What the
+   *scheduled* runs do is governed by the task's own permission mode in step 7 — the two are
+   separate, and this file alone will not make an unattended run silent. Put the question to the
+   user in their own language, roughly:
 
    > 브리핑은 매일 아침 자리에 안 계실 때 도는 작업입니다. 그때 권한을 물어보면 아무도 답하지
    > 않아 그대로 멈추고, 파일도 알림도 남지 않습니다. **이 위키 폴더 안에서** 파일을 읽고 쓰고,
@@ -132,6 +160,7 @@ Create the wiki folder first if it doesn't exist.
        "defaultMode": "acceptEdits",
        "allow": [
          "Bash",
+         "PowerShell",
          "Read",
          "Write",
          "Edit",
@@ -144,37 +173,69 @@ Create the wiki folder first if it doesn't exist.
    }
    ```
 
-   **Grant `Bash` as a whole, not command patterns.** Rules like `Bash(curl *)` look tidier and do
-   not work: the briefing builds compound commands (`cd … && cat > file <<'EOF'`, pipelines), the
-   permission parser cannot parse those, and an unparseable command falls through to a prompt no
-   matter what the allow list says. A pattern list produces a briefing that halts some mornings
-   and not others, which is worse than either extreme.
+   **Include `PowerShell`, not just `Bash`.** On Windows the briefing's PubMed work runs through
+   the PowerShell tool, so a `Bash`-only list leaves it prompting.
 
-   The grant is scoped to this folder, so it changes nothing anywhere else on the machine. If the
-   user would rather not, say plainly that the briefing will then need them present to click
-   through, and that "브리핑 해줘" on demand is the realistic mode.
+   **Grant each tool as a whole, not command patterns.** Rules like `Bash(curl *)` look tidier and
+   do not work: the briefing builds compound commands and pipelines, and a rule has to match every
+   subcommand independently, so a pattern list halts some mornings and not others.
+
+   **What this scopes, and what it doesn't.** The file only decides which tool calls skip the
+   prompt while working in this folder — no other folder's sessions are affected. It is not a
+   sandbox: an approved `Bash` or `PowerShell` call can still reach any path the user's account
+   can. Say that plainly rather than implying the grant confines Claude to the wiki.
 
    If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
 
 7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): **recurring, daily** at
-   the chosen time, working directory = the wiki folder, instruction:
+   the chosen time, working directory = **the wiki folder itself**, instruction:
    *"Open briefing/PROMPT.md in this folder and follow it."*
-   - **Recurring, not one-shot.** A one-shot task disables itself the moment it fires, and its
-     session goes with it — the user reads the notification, looks at something else, comes back,
-     and cannot find the briefing conversation again. A recurring task stays in the sidebar, so
-     the conversation is still there tomorrow.
+   - **Set the task's permission mode to 자동 (auto)** in the same form, next to the model picker.
+     This is what makes unattended runs actually run. In Manual or 편집 자동 수락 the task stops at
+     a permission prompt on every shell command, and step 9 explains why the other workarounds
+     don't hold. Auto mode isn't a bypass: a classifier vets each action in the background and
+     blocks the dangerous ones. If the picker doesn't offer 자동, this account or model can't use
+     it. Do not quietly settle for 편집 자동 수락 — that task stops at the first shell command and
+     cannot pass step 8. Tell the user the unattended briefing isn't available on this account,
+     leave the task in place as a reminder if they want it, and make "브리핑 해줘" on demand the
+     real mode.
+   - **Recurring, not one-shot — including when you are only testing.** A one-shot task disables
+     itself the moment it fires, and its session goes with it — the user reads the notification,
+     looks at something else, comes back, and cannot find the briefing conversation again. A
+     recurring task stays in the sidebar, so the conversation is still there tomorrow. This holds
+     for test runs too: a one-shot needs its own run-once-only configuration, which you then throw
+     away along with it. Register the daily task and test *that*.
    - If your environment has no scheduled-task capability (e.g. plain CLI), say so and tell
      the user the schedule needs the Claude Desktop app; meanwhile "브리핑 해줘" runs it on
      demand.
 
-8. **Run it once now, with the user watching**, and check that it wrote `briefings/{today}.md`,
-   printed the briefing in the session, and fired the notification. Any tool the settings file
-   missed will prompt during this run; approving it here stores the approval on the task. A
-   schedule that has never completed once is not set up, it is only scheduled.
+8. **Run it once with the user watching**, using **Run now** (지금 실행) on the task's detail page,
+   and check that it asked for nothing, wrote `briefings/{today}.md`, printed the briefing in the
+   session, and fired the notification. A schedule that has never completed once is not set up, it
+   is only scheduled. If it does prompt, fix it here — step 9 lists what to check.
 
-9. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
-   minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
-   next time they open Claude in the wiki folder.
+9. **When a scheduled run keeps prompting**, work through these in order. Every one of them was a
+   real cause on a real setup.
+   - **The task's permission mode is not 자동.** This is the fix; the rest are refinements. Set it
+     in the task's Edit form, not in the session's mode selector — the selector applies to that one
+     session, so a mode set there looks fixed and is back to Manual tomorrow.
+   - **The task's folder is a parent of the wiki**, not the wiki itself. Then every command needs a
+     `cd …;` prefix, which makes it compound, and compound commands can't be pre-approved.
+   - **Do not lean on "항상 허용" for this workload.** It saves the command string verbatim, and the
+     briefing's commands carry a per-run scratchpad path and the day's PubMed query inside the URL.
+     Tomorrow's command is a different string, so the list grows by half a dozen entries a day and
+     never covers the next run.
+   - **Do not tell the user to click 권한 무시 daily.** It disables the safety checks entirely and
+     the docs reserve it for containers and VMs.
+   - Reference: <https://code.claude.com/docs/en/desktop-scheduled-tasks#permissions-for-scheduled-tasks>.
+
+   Tell the user what the routine actually does: it scans the wiki folder, queries PubMed, and
+   writes `briefings/{date}.md`. The only thing it sends out is a PubMed search — plus the briefing
+   itself, if they chose email, Slack, or Notion. Wiki files are never uploaded anywhere.
+
+10. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
+    minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
+    next time they open Claude in the wiki folder.
 
 ## Step 4 — Korean humanizer skill
 
@@ -245,7 +306,8 @@ and say so rather than appending a second copy.
 
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
 and `briefing/PROMPT.md` written · permissions asked about, and `.claude/settings.json` written
-if granted · scheduled task registered **as recurring** and **run once successfully** · humanizer
+if granted · scheduled task registered **as recurring**, pointed at the wiki folder, and **run
+once successfully** via Run now **with no permission prompt at all** · humanizer
 installed, with its scope chosen and the block appended
 (or automatic application explicitly declined).
 
@@ -263,6 +325,11 @@ Then close with a short tour **in the user's language**:
   If yes, create the first entry right away.
 - **Asking questions**: answers come only from ingested papers; if none exists, Claude says so
   and asks for the PDF. Good answers can be saved as overview pages ("이거 overview로 저장해줘").
+- **Routine permissions**: one-time setup, not a daily chore. Show them the task's detail page and
+  name the three things to check if a morning ever comes up empty: the permission mode is 자동
+  (set in the Edit form, not the session selector), the folder is the wiki folder, and **지금 실행**
+  runs it on demand. A run that stops to ask means one of the first two slipped. Say plainly that
+  you already wrote the settings file for them and they never need to edit JSON.
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.
