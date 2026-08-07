@@ -3,8 +3,9 @@
 Run from the wiki root. `{CHANNEL}` was set during setup. Web access is allowed for this task
 only (PubMed E-utilities); it never overrides the wiki's other rules.
 
-Aim for **about 5 papers, quickly**. This is a morning glance, not a literature review. Fast and
-roughly right beats slow and exhaustive — judge from titles, and do not fetch abstracts.
+Aim for **5 papers, quickly**. This is a morning glance, not a literature review. Screen on titles
+alone — that is what keeps it fast — then read the abstracts of the five finalists only, so the
+lines you write about them are true. Five abstracts costs one request.
 
 1. Refresh the interest profile: run `python scan_interests.py` if it exists (on failure, carry on
    with the existing file). Then read `briefing/interests.md` and build the topic list:
@@ -32,8 +33,8 @@ roughly right beats slow and exhaustive — judge from titles, and do not fetch 
    however many matched, presented as though it were a selection.
 
    **Read `count` in the esearch response.** More than ~150 hits in the window means that topic is
-   a field name rather than a query — skip it and record it as skipped in the briefing. Never
-   sample from it.
+   a field name rather than a query — skip it. Never sample from it. Name the skipped topics in
+   the one-line run note at the foot of the briefing (step 4), not in the body.
 
    Sleep ~0.3 s between calls; NCBI asks for no more than 3 requests per second.
 
@@ -41,6 +42,17 @@ roughly right beats slow and exhaustive — judge from titles, and do not fetch 
    already reported in the last few `briefings/*.md` so the same paper does not return three
    mornings running. Drop
    correction/erratum/retraction notices. Prefer papers matching more than one topic.
+
+   Once the five are chosen — and only then — fetch their abstracts in a single call:
+
+   ```
+   https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={5 PMIDs}&retmode=xml&rettype=abstract
+   ```
+
+   Write the "what it is" line from the abstract, not the title. Titles overstate and omit; a
+   one-line description guessed from a title is how a briefing ends up describing a paper that
+   does not exist. If a finalist's abstract shows it is not what the title implied, drop it and
+   promote the next candidate.
 
    Relevance still beats the count: if fewer than 5 clear the bar, report fewer and say why
    rather than filling the quota with padding.
@@ -62,12 +74,28 @@ roughly right beats slow and exhaustive — judge from titles, and do not fetch 
    | Title | exact English title, verbatim, never translated |
    | Journal · date | journal name + the paper's date |
    | Link | `https://pubmed.ncbi.nlm.nih.gov/{PMID}/` |
-   | What it is | what the paper does, in one line — inferred from the title, so keep the claim modest |
+   | What it is | what the paper does, in one line, taken from the abstract you fetched |
    | Why it was picked | which interest topic matched, and the concrete tie: a wiki page (`[[wikilink]]`), an active project, or a question the user asked |
 
    Then close with an **overall read** — 3–5 lines across the whole set: what the week looks like,
    which paper to read first, what was thin or missing. This is the part the user acts on, so
    never skip it, and never replace it with a restatement of the list.
+
+   **Keep the machinery out of it.** The reader came for papers, not for a run log. Never put any
+   of this in the briefing or in the chat summary of it: how many pages `scan_interests.py`
+   scanned, how many topics ranked, which query strings ran, hit counts per topic, `retmax` /
+   `reldate` / `sort` or any other parameter, sleep intervals, how many PMIDs were deduped, or a
+   restatement of these instructions ("all five fields included, Korean body, English titles").
+   Doing the job correctly is not news; only the papers are.
+
+   The one permitted exception is a **single closing line** naming topics dropped for being too
+   broad and topics that returned nothing — because silently searching less than the user thinks
+   is a real problem. One line, at the very bottom, e.g.
+   *"메모: `human identification`, `whole genome sequencing`는 범위가 넓어 건너뛰었고,
+   `microhaplotype forensic panel`은 이번 주 신규 논문이 없습니다."*
+
+   Everything else about the run stays available on request — if the user asks how it searched,
+   tell them then.
 
 5. Deliver via **{CHANNEL}**:
    - **desktop**: send a push notification, e.g. "논문 브리핑: 5편 — 오늘의 pick: {top title}"
