@@ -67,15 +67,31 @@ lines you write about them are true. Five abstracts costs one request.
    **How many:** exactly **5** unless the user asked for a different number. Fewer only when
    fewer than 5 relevant papers exist — then say so in one line and do not pad.
 
-   Required per paper — all five, each one short line, no paragraphs:
+   Every paper needs five things: the **exact English title** (verbatim, never translated), the
+   **journal and date**, the **PubMed link**, **what the paper does** (from the abstract you
+   fetched), and **why it was picked** — which interest matched, and the concrete tie: a wiki page
+   (`[[wikilink]]`), an active project, or a question the user asked.
 
-   | Field | Content |
-   |---|---|
-   | Title | exact English title, verbatim, never translated |
-   | Journal · date | journal name + the paper's date |
-   | Link | `https://pubmed.ncbi.nlm.nih.gov/{PMID}/` |
-   | What it is | what the paper does, in one line, taken from the abstract you fetched |
-   | Why it was picked | which interest topic matched, and the concrete tie: a wiki page (`[[wikilink]]`), an active project, or a question the user asked |
+   **Write it as prose, not as a form.** Those five are what must be present, not a layout to
+   reproduce. A briefing that renders them as labelled bullets — `- **저널·날짜** — …`,
+   `- **어떤 논문인가** — …` — reads like a database dump and is the single fastest way to make a
+   good briefing unpleasant. Heading, then a short paragraph or two that happen to contain
+   everything. Like this:
+
+   ```markdown
+   ## 1. Assessing the influence of different alignment tools on the accuracy of a forensic epigenetic clock
+
+   *Bioinformatics* · 2026-08-04 · https://pubmed.ncbi.nlm.nih.gov/42550240/
+
+   검증된 forensic epigenetic clock 데이터를 bisulfite 정렬 도구 네 가지로 각각 돌려 예측
+   연령을 비교했습니다. 원래 쓰던 Bwa-meth를 이긴 도구는 없었지만 도구마다 나이가 달라졌고,
+   같은 비교를 직접 해볼 Shiny 앱도 함께 냈습니다.
+
+   `DNA methylation age estimation forensic` 매칭입니다. 위키의 `epigenetics-age` 칸이 아직
+   비어 있는데, 첫 페이지로 앉히기 좋은 방법론 논문입니다.
+   ```
+
+   Two short paragraphs: what it is, then why you are seeing it. That is the whole format.
 
    Then close with an **overall read** — 3–5 lines across the whole set: what the week looks like,
    which paper to read first, what was thin or missing. This is the part the user acts on, so
