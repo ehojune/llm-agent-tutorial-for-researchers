@@ -37,12 +37,13 @@ roughly right beats slow and exhaustive — judge from titles, and do not fetch 
 
    Sleep ~0.3 s between calls; NCBI asks for no more than 3 requests per second.
 
-3. Pick ~5 papers overall. Dedupe by PMID, and also against PMIDs already reported in the last few
-   `briefings/*.md` so the same paper does not return three mornings running. Drop
+3. Pick 5 papers overall — the count rule is in step 4. Dedupe by PMID, and also against PMIDs
+   already reported in the last few `briefings/*.md` so the same paper does not return three
+   mornings running. Drop
    correction/erratum/retraction notices. Prefer papers matching more than one topic.
 
-   Relevance beats quantity — two good papers is a fine briefing, five padded ones is not. If
-   everything comes back empty or off-topic, say that instead of filling the quota.
+   Relevance still beats the count: if fewer than 5 clear the bar, report fewer and say why
+   rather than filling the quota with padding.
 
 4. Write `briefings/{YYYY-MM-DD}.md`.
 
@@ -51,10 +52,22 @@ roughly right beats slow and exhaustive — judge from titles, and do not fetch 
    material for the user, not wiki content, so do not default it to English. Paper titles,
    journal names, and technical terms stay English.
 
-   Per paper: exact English title (verbatim, never translated), journal, date, PubMed link
-   (`https://pubmed.ncbi.nlm.nih.gov/{PMID}/`), and **one short line** on which interest it
-   matched and why — a sentence, not a paragraph. If it relates to an existing wiki page, add the
-   `[[wikilink]]`.
+   **How many:** exactly **5** unless the user asked for a different number. Fewer only when
+   fewer than 5 relevant papers exist — then say so in one line and do not pad.
+
+   Required per paper — all five, each one short line, no paragraphs:
+
+   | Field | Content |
+   |---|---|
+   | Title | exact English title, verbatim, never translated |
+   | Journal · date | journal name + the paper's date |
+   | Link | `https://pubmed.ncbi.nlm.nih.gov/{PMID}/` |
+   | What it is | what the paper does, in one line — inferred from the title, so keep the claim modest |
+   | Why it was picked | which interest topic matched, and the concrete tie: a wiki page (`[[wikilink]]`), an active project, or a question the user asked |
+
+   Then close with an **overall read** — 3–5 lines across the whole set: what the week looks like,
+   which paper to read first, what was thin or missing. This is the part the user acts on, so
+   never skip it, and never replace it with a restatement of the list.
 
 5. Deliver via **{CHANNEL}**:
    - **desktop**: send a push notification, e.g. "논문 브리핑: 5편 — 오늘의 pick: {top title}"
