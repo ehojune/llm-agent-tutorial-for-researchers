@@ -8,7 +8,7 @@
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
-| PENDING | [`PENDING`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/PENDING) | **브리핑이 승인 가능한 형태로만 명령을 짭니다.** 힙독(`cat > x.py <<EOF`)으로 스크립트를 쓰면 명령 하나가 통째로 길어져 어떤 허용 규칙에도 안 걸리고, 따옴표를 품은 중괄호 `{"a","b"}`는 셸 보안 검사에 걸려 허용 목록과 무관하게 매번 물어봅니다. 이제 스크립트는 Write 도구로 만들고 `python x.py`로 따로 실행하며, `cd … &&` 접두사도 쓰지 않습니다 |
+| 20:37 | [`34e2e8c`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/34e2e8c) | **브리핑이 승인 가능한 형태로만 명령을 짭니다.** 힙독(`cat > x.py <<EOF`)으로 스크립트를 쓰면 명령 하나가 통째로 길어져 어떤 허용 규칙에도 안 걸리고, 따옴표를 품은 중괄호 `{"a","b"}`는 셸 보안 검사에 걸려 허용 목록과 무관하게 매번 물어봅니다. 이제 스크립트는 Write 도구로 만들고 `python x.py`로 따로 실행하며, `cd … &&` 접두사도 쓰지 않습니다 |
 | 20:28 | [`8fbdcfd`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/8fbdcfd) | **Windows에서 권한 목록에 `PowerShell`을 넣습니다.** `Bash`만 열어두면 PubMed 검색 루프가 매번 권한을 묻습니다 — Windows에서 그 루프는 PowerShell 도구로 돌기 때문입니다. 여러 줄 스크립트라 "항상 허용"도 안 뜨고 "한 번만 허용"만 나옵니다 |
 | 20:12 | [`5c701d0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/5c701d0) | **루틴 권한은 처음 한 번만 잡으면 됩니다.** 매일 "권한 무시"를 누르라고 적었던 앞 커밋을 뒤집었습니다. 공식 문서대로 상세 페이지에서 **지금 실행**을 누르고 프롬프트마다 **항상 허용**을 고르면 다음 실행부터 안 묻습니다. 매번 묻던 진짜 원인은 루틴의 **폴더가 위키 폴더가 아니라 상위 폴더**였던 것 — 그러면 위키의 `.claude/settings.json`이 안 읽히고 명령마다 `cd`가 붙어 복합 명령이 되는 탓에 "항상 허용" 선택지 자체가 안 뜹니다 |
 | 19:41 | [`9e1281d`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/9e1281d) | **루틴은 매일 "권한 무시"를 한 번 눌러야 합니다.** 루틴이 매일 새 대화창에서 도는 탓에 어제 준 허락이 오늘로 이어지지 않아서, 폴더 권한을 미리 열어둬도 그날 대화창에서 한 번은 눌러줘야 합니다. 누르는 곳은 **세팅을 시킨 대화창이 아니라 루틴 대화창** — 사이드바 *루틴*에서 브리핑 항목을 열고 입력창 왼쪽 아래를 누릅니다. 스크린샷 두 장과 함께 README에 넣고, 세팅 중에 이걸 안내하는 단계를 SETUP에 추가했습니다. 시험용 루틴도 일회성 대신 **매일 반복**으로 — 일회성은 그것만을 위한 설정을 따로 해야 하고, 한 번 돌면 대화창째 사라집니다 |
