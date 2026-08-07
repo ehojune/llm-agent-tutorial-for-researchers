@@ -169,8 +169,9 @@ Create the wiki folder first if it doesn't exist.
    - **Recurring, not one-shot — including when you are only testing.** A one-shot task disables
      itself the moment it fires, and its session goes with it — the user reads the notification,
      looks at something else, comes back, and cannot find the briefing conversation again. A
-     recurring task stays in the sidebar, so the conversation is still there tomorrow. If you
-     need a test run, register it as daily and let it fire; never make a throwaway one-shot.
+     recurring task stays in the sidebar, so the conversation is still there tomorrow. This holds
+     for test runs too: a one-shot needs its own run-once-only configuration, which you then throw
+     away along with it. Register the daily task and test *that*.
    - If your environment has no scheduled-task capability (e.g. plain CLI), say so and tell
      the user the schedule needs the Claude Desktop app; meanwhile "브리핑 해줘" runs it on
      demand.
@@ -184,7 +185,11 @@ Create the wiki folder first if it doesn't exist.
    conversation every day*, and the approvals from yesterday's conversation do not carry over —
    so `.claude/settings.json` alone does not guarantee a silent run. In that day's routine
    conversation the user clicks **권한 무시** (bypass permissions), bottom-left of the input box,
-   once. Show them where it is; the README has a screenshot at `images/routine-permission-bypass.png`.
+   once. **Be explicit about *which* conversation** — not the setup conversation you are in right
+   now, but the briefing routine's own conversation, opened from **루틴** in the left sidebar. To a
+   first-time user every panel looks alike, and this is the one instruction they will get wrong.
+   Walk them through it: sidebar 루틴 → the briefing entry → 권한 무시 under the input box. The
+   README has both screenshots (`images/routine-sidebar.png`, `images/routine-permission-bypass.png`).
    Say plainly why it is safe here: the briefing only scans the wiki folder, searches PubMed, and
    writes `briefings/{date}.md`. And say plainly that it is a daily chore for now — routing the
    briefing to Slack or email later removes the need to check in at all.
@@ -282,7 +287,8 @@ Then close with a short tour **in the user's language**:
 - **Asking questions**: answers come only from ingested papers; if none exists, Claude says so
   and asks for the PDF. Good answers can be saved as overview pages ("이거 overview로 저장해줘").
 - **The daily 권한 무시**: repeat it in the tour — each day's routine conversation is new, so one
-  click on **권한 무시** in that conversation keeps the briefing from stalling on a prompt.
+  click on **권한 무시** *in that conversation* (사이드바 루틴 → 브리핑 항목) keeps the briefing
+  from stalling on a prompt. Say again that it is the routine's conversation, not this one.
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.
