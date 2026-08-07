@@ -71,20 +71,34 @@ Create the wiki folder first if it doesn't exist.
 
 ### 2b. Custom version
 
-1. Fetch `templates/CLAUDE-custom.md`, fill in `[YOUR FIELD]` and the category table (5–10
-   categories proposed from the field, user-approved), and save it as `{wiki}/CLAUDE.md`.
-2. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
+1. **Find a Python 3 launcher — do this before creating any files.** PDF extraction and
+   `scan_interests.py` both need it, and if it turns out to be unavailable the fallback is the
+   original version in Step 2a. Falling back after writing `CLAUDE.md` leaves a half-built custom
+   wiki in the folder that then collides with 2a, so check first.
+
+   Try `python3 --version`, `python --version`, and on Windows `py -3 --version`. Accept the
+   first that prints a version starting with `3`:
+   - Ubuntu and most Linux distributions ship Python as `python3` only — a bare `python` is
+     often absent there, which is not the same as Python being absent.
+   - Some systems still answer `python` with a 2.x version. `scan_interests.py` uses f-strings,
+     so a 2.x launcher fails after setup rather than during it.
+   - On Windows without Python, the Microsoft Store execution alias answers `python` with a store
+     prompt and exit code 9009 — no version line, so it fails this check as it should.
+
+   Call the winner `{PYTHON}`. It is substituted into the files written below, so the user's wiki
+   ends up with the launcher that actually works on their machine, not a generic `python`.
+
+   If none answers, ask to install Python and do it — the user has to approve the command, so
+   just ask. Re-run the probe afterwards to learn `{PYTHON}`. If they cannot install at all,
+   switch to the original version in Step 2a, which needs no Python.
+2. Fetch `templates/CLAUDE-custom.md`, fill in `[YOUR FIELD]`, the category table (5–10
+   categories proposed from the field, user-approved), and `{PYTHON}`, and save it as
+   `{wiki}/CLAUDE.md`.
+3. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
    `wiki/{each-category}/`, `wiki/overviews/`, `wiki/concepts/`, `wiki/seminars/`,
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
    `wiki/conversations/`, `wiki/other/`.
-3. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
-4. **Make sure Python works** — PDF extraction and `scan_interests.py` both need it. Run
-   `python --version` (`py --version` on Windows) and accept a launcher only when it prints a
-   version string: on Windows without Python, the Microsoft Store alias answers `python` with a
-   store prompt and exit code 9009. Remember which launcher works; later steps use its name.
-   If neither answers, ask to install Python and do it — the user has to approve the command, so
-   just ask. If they cannot install at all, offer the original version from Step 2a, which needs
-   no Python.
+4. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
 5. Create an empty `index.md` with the category headings.
 
 ## Step 3 — Briefing system (both versions)
@@ -116,7 +130,8 @@ Create the wiki folder first if it doesn't exist.
    wiki they are all there is. (Original version: the AUTO block stays empty, which is fine.)
 3. Fetch `templates/briefing-prompt.md`, fill `{CHANNEL}` with the chosen channel and
    `{DESTINATION}` with the address/channel/database (`n/a` for desktop), and save it as
-   `{wiki}/briefing/PROMPT.md`.
+   `{wiki}/briefing/PROMPT.md`. Custom version: also fill `{PYTHON}` with the launcher found in
+   Step 2b. Original version: there is no scanner, so delete that clause of step 1 instead.
 4. Fetch `templates/wiki-extras.md`, fill `{BRIEFING_TIME}`, and **append it** to the rulebook
    (`CLAUDE.md` for custom, `AGENTS.md` for original). This adds three things: the automatic
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for

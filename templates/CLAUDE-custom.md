@@ -84,13 +84,13 @@ methylation category, not the phenotype's category.
 
 ### Step 1 — Copy PDF to `papers/` and extract text
 
-Use `pypdf` (pure Python, no Java required). Run it with the Python launcher that setup verified —
-the examples say `python`, but on Windows it is often `py`:
+Use `pypdf` (pure Python, no Java required). `{PYTHON}` is the launcher setup verified on this
+machine:
 
 ```bash
-python -m pip install pypdf
+{PYTHON} -m pip install pypdf
 
-python -c "
+{PYTHON} -c "
 import pypdf, sys, pathlib
 reader = pypdf.PdfReader(sys.argv[1])
 text = ''
@@ -205,11 +205,11 @@ Every wiki page carries `tags`. The script `scan_interests.py` aggregates them i
 interest profile:
 
 ```bash
-python scan_interests.py
+{PYTHON} scan_interests.py
 ```
 
-On Windows the launcher may be `py` instead. If neither runs, the Python that setup verified is
-gone — repair it rather than hand-computing the profile or writing a throwaway replacement script.
+If that no longer runs, the Python setup verified is gone — repair it rather than hand-computing
+the profile or writing a throwaway replacement script.
 
 - **Weights** (interest contribution per source type): chat question = 2.0 (active curiosity,
   strongest signal) > paper = seminar = project_meeting = 1.5 > textbook_study = 0.5 >

@@ -7,10 +7,10 @@ Aim for **5 papers, quickly**. This is a morning glance, not a literature review
 alone — that is what keeps it fast — then read the abstracts of the five finalists only, so the
 lines you write about them are true. Five abstracts costs one request.
 
-1. Refresh the interest profile: run `python scan_interests.py` if it exists (`py` on Windows).
-   On failure, carry on with the existing file, but report the failure at the end — the custom
-   version needs a working Python, so this is a repair to flag, not something to work around by
-   recomputing the profile by hand. Then read `briefing/interests.md` and build the topic list:
+1. Refresh the interest profile: run `{PYTHON} scan_interests.py` if it exists. On failure, carry
+   on with the existing file, but say so in the closing note (step 4) — the custom version needs a
+   working Python, so this is a repair to flag, not something to work around by recomputing the
+   profile by hand. Then read `briefing/interests.md` and build the topic list:
    - every bullet under **`## Manual queries`** — always included, these are the backbone
    - the top ~6 from the AUTO block, in score order
    - drop anything matching a bullet under **`## Excluded topics`**, both as a query and later as
@@ -106,11 +106,15 @@ lines you write about them are true. Five abstracts costs one request.
    restatement of these instructions ("all five fields included, Korean body, English titles").
    Doing the job correctly is not news; only the papers are.
 
-   The one permitted exception is a **single closing line** naming topics dropped for being too
-   broad and topics that returned nothing — because silently searching less than the user thinks
-   is a real problem. One line, at the very bottom, e.g.
+   The one permitted exception is a **single closing note** covering only what made the briefing
+   narrower than the user expects — because silently searching less than they think is a real
+   problem. Three things qualify, nothing else: topics dropped for being too broad, topics that
+   returned nothing, and `scan_interests.py` failing to run (which means the interest profile is
+   stale and needs repair). Keep it to a line, at the very bottom, e.g.
    *"메모: `human identification`, `whole genome sequencing`는 범위가 넓어 건너뛰었고,
    `microhaplotype forensic panel`은 이번 주 신규 논문이 없습니다."*
+   With a scanner failure, add: *"관심사 스캐너가 돌지 않아 기존 목록으로 진행했습니다 — Python
+   확인이 필요합니다."*
 
    Everything else about the run stays available on request — if the user asks how it searched,
    tell them then.
