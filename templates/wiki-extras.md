@@ -26,3 +26,14 @@ evidence. Papers enter the wiki only through PDF ingest.
 **Catch-up rule.** At the start of any session in this folder: if today's `briefings/` file does
 not exist and the current time is past {BRIEFING_TIME}, tell the user the briefing was missed
 (the machine was probably off) and offer to run it now by following `briefing/PROMPT.md`.
+
+## Project Base (on request, anytime)
+
+The wiki holds what the user *learned*; a **project base** (GitHub repo or Notion page) holds
+the *work itself* — README, plans, code, data locations — and serves as the handoff token
+between conversations and agents. It is deliberately not part of setup. Whenever the user asks
+for it ("프로젝트 베이스 만들어줘", "이 프로젝트 GitHub/Notion에 정리해줘"), fetch and follow:
+
+`https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/project-base.md`
+
+(Fetching that one file is a permitted exception to rule #1, like the briefing.)

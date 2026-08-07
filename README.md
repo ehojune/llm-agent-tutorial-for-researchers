@@ -45,6 +45,22 @@ Claude가 이 저장소를 읽고 몇 가지를 물어본 뒤(연구 분야, 위
 원본: [joonan30 gist](https://gist.github.com/joonan30/cbce305684d079dbe9a3fbaefe4e3959) ·
 확장판 템플릿: [templates/](templates/)
 
+## 세팅 후 추천 — 프로젝트 베이스 (GitHub 또는 Notion)
+
+위키가 "알게 된 것"을 쌓는 곳이라면, 프로젝트 베이스는 "작업 그 자체"(README, 계획, 코드,
+데이터 위치)를 두는 곳입니다. 세팅이 끝난 뒤 아무 때나 Claude에게 **"프로젝트 베이스
+만들어줘"** 하면 됩니다.
+
+- 가장 큰 효용: 대화가 길어지거나 다른 에이전트에게 넘길 때 "프로젝트 맥락 전부 README에
+  정리해서 저장해줘" 한 뒤 링크만 던지면, 배경 설명을 반복하지 않아도 됩니다.
+- **GitHub** — 변경 이력이 전부 남는 온라인 프로젝트 폴더. 에이전트가 연동 설정 없이 바로
+  읽고 쓰며, git을 몰라도 "git에 저장해줘"가 곧 commit+push가 되도록 규칙을 넣어줍니다.
+- **Notion** — 편집과 공유가 쉽고, 할일 트래커·Notion Calendar 연동이 큰 장점 (Notion MCP
+  필요). 검증된 트래커 템플릿 구조가 [templates/project-base.md](templates/project-base.md)에
+  들어 있습니다.
+- 민감한 연구는 **private 권장** — 언제든 공개로 전환할 수 있고, private여도 지정한 사람을
+  초대해 함께 볼 수 있습니다.
+
 ## 더 읽을거리
 
 - 짧고 쉬운 소개 (10분): <https://joonan30.github.io/llm-wiki-labs/evolution/>

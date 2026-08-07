@@ -13,6 +13,8 @@ Notes before you start:
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/wiki-extras.md`
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/briefing-prompt.md`
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/scan_interests.py`
+  - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/project-base.md`
+    (post-setup module — do NOT run during setup; the wiki-extras rulebook points to it)
 
 ## Step 1 — Ask, in two short rounds
 
@@ -137,6 +139,15 @@ Then close with a short tour **in the user's language**:
 - **Asking questions**: answers come only from ingested papers; if none exists, Claude says so
   and asks for the PDF. Good answers can be saved as overview pages ("이거 overview로 저장해줘").
 - **Humanizer**: 한국어 글을 다듬고 싶을 때 "이 글 자연스럽게 해줘".
+- **Recommended next step — project base**: for each ongoing research project, a GitHub repo or
+  Notion page can hold the *work itself* (README, plans, code, data locations) — the wiki holds
+  what you learned, the project base holds the work. Its killer use: when a conversation runs
+  long or you switch agents, "프로젝트 맥락 전부 README에 정리해서 저장해줘" then hand the new
+  agent just the link. GitHub gives native agent access and full history ("git에 저장해줘" =
+  commit+push, no git knowledge needed); Notion is easier to edit/share and can later hook into
+  a to-do tracker and Notion Calendar. Sensitive research → private (toggleable anytime;
+  collaborators can still be invited). Don't set it up now — tell the user to ask
+  **"프로젝트 베이스 만들어줘"** whenever they're ready, in any future session.
 - **Graph view**: install Obsidian (free) and open the wiki folder as a vault whenever they
   want a visual map.
 - **Reading**: short intro <https://joonan30.github.io/llm-wiki-labs/evolution/> · full free
