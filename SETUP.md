@@ -2,7 +2,9 @@
 
 You are reading this because a user asked you to set this tutorial up ("나도 이거 세팅해줘",
 "set this up for me", or similar). Follow the steps in order. Converse in the user's language;
-all wiki *content* is written in English.
+all wiki *content* — `sources/` and `wiki/` pages — is written in English. Anything the user
+*reads* rather than retrieves (daily briefings, follow-up reports, summaries in chat) goes in the
+user's language, with paper titles left in English.
 
 Notes before you start:
 

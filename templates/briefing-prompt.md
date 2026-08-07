@@ -44,9 +44,16 @@ roughly right beats slow and exhaustive — judge from titles, and do not fetch 
    Relevance beats quantity — two good papers is a fine briefing, five padded ones is not. If
    everything comes back empty or off-topic, say that instead of filling the quota.
 
-4. Write `briefings/{YYYY-MM-DD}.md`. Per paper: exact English title (verbatim, never
-   translated), journal, date, PubMed link (`https://pubmed.ncbi.nlm.nih.gov/{PMID}/`), and one
-   line on which interest it matches and why. If it relates to an existing wiki page, add the
+4. Write `briefings/{YYYY-MM-DD}.md`.
+
+   **Body language: the user's language** — the same language you converse in (Korean for a Korean
+   user). The wiki's English-only policy covers `sources/` and `wiki/`; `briefings/` is reading
+   material for the user, not wiki content, so do not default it to English. Paper titles,
+   journal names, and technical terms stay English.
+
+   Per paper: exact English title (verbatim, never translated), journal, date, PubMed link
+   (`https://pubmed.ncbi.nlm.nih.gov/{PMID}/`), and **one short line** on which interest it
+   matched and why — a sentence, not a paragraph. If it relates to an existing wiki page, add the
    `[[wikilink]]`.
 
 5. Deliver via **{CHANNEL}**:

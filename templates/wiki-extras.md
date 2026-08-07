@@ -22,6 +22,10 @@ After **every** paper ingest, without being asked, follow up in the conversation
 - `briefings/{YYYY-MM-DD}.md` — briefing output, one file per day.
 - A scheduled task runs the briefing daily at **{BRIEFING_TIME}** in this folder.
 
+**Language.** Briefings are written in the **user's language** (paper titles stay English,
+verbatim). The "all wiki content is in English" policy covers `sources/` and `wiki/` — it does not
+reach `briefings/`, which the user reads rather than the retrieval system.
+
 **Web-access exception to rule #1.** The briefing task — and only it — may fetch PubMed
 E-utilities. Briefing output is *leads, not knowledge*: never cite `briefings/` as wiki
 evidence. Papers enter the wiki only through PDF ingest.
