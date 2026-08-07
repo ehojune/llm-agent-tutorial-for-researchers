@@ -75,6 +75,8 @@ Claude가 이 저장소를 읽고 몇 가지를 물어본 뒤(연구 분야, 위
 
 ## 위키 구경하기
 
+<img width="1920" height="1888" alt="image" src="https://github.com/user-attachments/assets/553c6c02-9ea7-4d8e-b9dc-81a220743670" />
+
 그래프 뷰로 훑고 싶으면 [Obsidian](https://obsidian.md/)(무료)을 설치하고 wiki 폴더를
 Vault로 여세요. 읽기만 하므로 에이전트 작업과 충돌하지 않습니다.
 
