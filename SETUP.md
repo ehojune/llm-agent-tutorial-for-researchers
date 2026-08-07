@@ -116,36 +116,53 @@ Create the wiki folder first if it doesn't exist.
    missed briefings.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
-6. **Pre-approve the tools the briefing needs.** Do not skip this — it is the difference between
-   a briefing that runs and one that does not. A scheduled run happens while the user is away, so
-   a permission prompt does not get answered: the run stops there, writes nothing, and sends no
-   notification. Write `{wiki}/.claude/settings.json`:
+6. **Ask for the permissions the briefing needs, and ask now.** This step decides whether the
+   briefing ever runs unattended. Put the question to the user in their own language, roughly:
+
+   > 브리핑은 매일 아침 자리에 안 계실 때 도는 작업입니다. 그때 권한을 물어보면 아무도 답하지
+   > 않아 그대로 멈추고, 파일도 알림도 남지 않습니다. **이 위키 폴더 안에서** 파일을 읽고 쓰고,
+   > PubMed를 검색하고, `scan_interests.py`를 돌릴 권한을 미리 열어둘까요? 이 폴더에서만
+   > 적용되고, 다른 작업에는 영향이 없습니다.
+
+   On yes, write `{wiki}/.claude/settings.json`:
 
    ```json
    {
      "permissions": {
+       "defaultMode": "acceptEdits",
        "allow": [
-         "Bash(curl *)",
-         "Bash(python scan_interests.py)",
-         "Bash(python3 scan_interests.py)",
+         "Bash",
          "Read",
          "Write",
          "Edit",
          "Glob",
          "Grep",
+         "WebFetch",
          "PushNotification"
        ]
      }
    }
    ```
 
-   Scoped to the wiki folder, so it grants nothing anywhere else. `curl` is there for PubMed;
-   narrow it further if the user prefers. If the chosen channel is email/Slack/Notion, add that
-   connector's tool too.
+   **Grant `Bash` as a whole, not command patterns.** Rules like `Bash(curl *)` look tidier and do
+   not work: the briefing builds compound commands (`cd … && cat > file <<'EOF'`, pipelines), the
+   permission parser cannot parse those, and an unparseable command falls through to a prompt no
+   matter what the allow list says. A pattern list produces a briefing that halts some mornings
+   and not others, which is worse than either extreme.
 
-7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): daily at the chosen
-   time, working directory = the wiki folder, instruction:
+   The grant is scoped to this folder, so it changes nothing anywhere else on the machine. If the
+   user would rather not, say plainly that the briefing will then need them present to click
+   through, and that "브리핑 해줘" on demand is the realistic mode.
+
+   If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
+
+7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): **recurring, daily** at
+   the chosen time, working directory = the wiki folder, instruction:
    *"Open briefing/PROMPT.md in this folder and follow it."*
+   - **Recurring, not one-shot.** A one-shot task disables itself the moment it fires, and its
+     session goes with it — the user reads the notification, looks at something else, comes back,
+     and cannot find the briefing conversation again. A recurring task stays in the sidebar, so
+     the conversation is still there tomorrow.
    - If your environment has no scheduled-task capability (e.g. plain CLI), say so and tell
      the user the schedule needs the Claude Desktop app; meanwhile "브리핑 해줘" runs it on
      demand.
@@ -227,8 +244,9 @@ and say so rather than appending a second copy.
 ## Step 5 — Verify, then give the tour
 
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
-and `briefing/PROMPT.md` written · `.claude/settings.json` written · scheduled task registered
-**and run once successfully** · humanizer installed, with its scope chosen and the block appended
+and `briefing/PROMPT.md` written · permissions asked about, and `.claude/settings.json` written
+if granted · scheduled task registered **as recurring** and **run once successfully** · humanizer
+installed, with its scope chosen and the block appended
 (or automatic application explicitly declined).
 
 When you mention the schedule to the user, call it by the name they see in the sidebar — **루틴**
