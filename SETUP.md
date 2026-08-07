@@ -179,8 +179,9 @@ Create the wiki folder first if it doesn't exist.
    If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
 
 7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): **recurring, daily** at
-   the chosen time, working directory = the wiki folder, instruction:
-   *"Open briefing/PROMPT.md in this folder and follow it."*
+   the chosen time, working directory = **the wiki folder itself**, instruction:
+   *"Open briefing/PROMPT.md in this folder and follow it."* The folder is what makes the
+   permissions in step 6 apply at all — step 9 explains what breaks when it points at a parent.
    - **Recurring, not one-shot — including when you are only testing.** A one-shot task disables
      itself the moment it fires, and its session goes with it — the user reads the notification,
      looks at something else, comes back, and cannot find the briefing conversation again. A
@@ -196,15 +197,19 @@ Create the wiki folder first if it doesn't exist.
    missed will prompt during this run; approving it here stores the approval on the task. A
    schedule that has never completed once is not set up, it is only scheduled.
 
-9. **Teach the daily "권한 무시" click, right here at setup.** The routine opens a *new
-   conversation every day*, and the approvals from yesterday's conversation do not carry over —
-   so `.claude/settings.json` alone does not guarantee a silent run. In that day's routine
-   conversation the user clicks **권한 무시** (bypass permissions), bottom-left of the input box,
-   once. **Be explicit about *which* conversation** — not the setup conversation you are in right
-   now, but the briefing routine's own conversation, opened from **루틴** in the left sidebar. To a
-   first-time user every panel looks alike, and this is the one instruction they will get wrong.
-   Walk them through it: sidebar 루틴 → the briefing entry → 권한 무시 under the input box. The
-   README has both screenshots (`images/routine-sidebar.png`, `images/routine-permission-bypass.png`).
+9. **Prime the task's permissions with "Run now", and check its folder.** Do this instead of
+   telling the user to click **권한 무시** every day; bypass mode turns off the safety checks
+   entirely and the docs reserve it for containers and VMs.
+   - **The task's folder must be the wiki folder itself**, not a parent. Two things break when
+     it's a parent: the wiki's `.claude/settings.json` never loads, and every command needs a
+     `cd …;` prefix, which makes it a compound command — those offer only "한 번만 허용", never
+     "항상 허용". The run then prompts forever. Verify the folder on the task's detail page.
+   - Click **Run now** (지금 실행) on the detail page and answer each permission prompt with
+     **always allow** (항상 허용). Future runs of that task auto-approve the same tools without
+     prompting; the saved approvals are listed under **항상 허용됨** on the same page, where they
+     can also be revoked. Prefer a stable command shape over a one-off — an approval saved for
+     one exact PubMed URL won't match tomorrow's query.
+   - Reference: <https://code.claude.com/docs/en/desktop-scheduled-tasks#permissions-for-scheduled-tasks>.
    Say plainly why it is safe here: the briefing only scans the wiki folder, searches PubMed, and
    writes `briefings/{date}.md`. And say plainly that it is a daily chore for now — routing the
    briefing to Slack or email later removes the need to check in at all.
@@ -282,8 +287,8 @@ and say so rather than appending a second copy.
 
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
 and `briefing/PROMPT.md` written · permissions asked about, and `.claude/settings.json` written
-if granted · scheduled task registered **as recurring** and **run once successfully** · the daily
-**권한 무시** click explained · humanizer
+if granted · scheduled task registered **as recurring**, pointed at the wiki folder, and **run
+once successfully** via Run now with always-allow answers · humanizer
 installed, with its scope chosen and the block appended
 (or automatic application explicitly declined).
 
@@ -301,9 +306,9 @@ Then close with a short tour **in the user's language**:
   If yes, create the first entry right away.
 - **Asking questions**: answers come only from ingested papers; if none exists, Claude says so
   and asks for the PDF. Good answers can be saved as overview pages ("이거 overview로 저장해줘").
-- **The daily 권한 무시**: repeat it in the tour — each day's routine conversation is new, so one
-  click on **권한 무시** *in that conversation* (사이드바 루틴 → 브리핑 항목) keeps the briefing
-  from stalling on a prompt. Say again that it is the routine's conversation, not this one.
+- **Routine permissions**: tell them it is a one-time setup, not a daily chore — 사이드바 루틴 →
+  브리핑 → **지금 실행**, and **항상 허용** on any prompt. The task's detail page shows the folder
+  and the saved approvals (**항상 허용됨**) if a run ever starts stalling again.
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.
