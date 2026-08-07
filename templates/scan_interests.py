@@ -65,7 +65,15 @@ AUTO_END = "<!-- AUTO:wiki-interests END -->"
 
 # --- frontmatter parsing --------------------------------------------------
 def parse_frontmatter(text):
-    """Minimal YAML frontmatter parser for the fields we need."""
+    """Minimal YAML frontmatter parser for the fields we need.
+
+    Accepts both tag spellings, since either is valid YAML and agents write both:
+
+        tags: [a, b]        # inline
+        tags:               # block
+          - a
+          - b
+    """
     if not text.startswith("---"):
         return {}
     end = text.find("\n---", 3)
@@ -73,18 +81,32 @@ def parse_frontmatter(text):
         return {}
     block = text[3:end]
     fm = {}
+    in_tag_block = False  # collecting "- item" lines under a bare "tags:"
     for line in block.splitlines():
         line = line.rstrip()
-        if not line or ":" not in line:
+        if not line:
+            continue
+        stripped = line.lstrip()
+        if in_tag_block and stripped.startswith("- "):
+            item = stripped[2:].strip().strip("'\"")
+            if item:
+                fm["tags"].append(item)
+            continue
+        in_tag_block = False
+        if ":" not in line:
             continue
         key, _, val = line.partition(":")
         key = key.strip()
         val = val.strip()
         if key == "tags":
-            # inline list form: [a, b, c]
-            val = val.strip("[]")
-            tags = [t.strip().strip("'\"") for t in val.split(",") if t.strip()]
-            fm["tags"] = tags
+            if val:
+                # inline list form: [a, b, c]
+                val = val.strip("[]")
+                fm["tags"] = [t.strip().strip("'\"") for t in val.split(",") if t.strip()]
+            else:
+                # block list form: items follow on the next lines
+                fm["tags"] = []
+                in_tag_block = True
         else:
             fm[key] = val.strip("'\"")
     return fm

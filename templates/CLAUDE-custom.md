@@ -90,16 +90,20 @@ Use `pypdf` (pure Python, no Java required):
 pip3 install pypdf
 
 python3 -c "
-import pypdf, sys
+import pypdf, sys, pathlib
 reader = pypdf.PdfReader(sys.argv[1])
 text = ''
 for page in reader.pages[:15]:
     t = page.extract_text()
     if t: text += t + '\n'
     if len(text) > 12000: break
-print(text[:12000])
-" "/path/to/paper.pdf"
+pathlib.Path(sys.argv[2]).write_text(text[:12000], encoding='utf-8')
+" "/path/to/paper.pdf" extracted.txt
 ```
+
+Write to a UTF-8 file rather than printing. On a non-UTF-8 console — Korean Windows defaults to
+cp949 — `print()` dies with `UnicodeEncodeError` on the first accented author name or Greek
+letter, and the extraction looks like a tooling failure rather than an encoding one.
 
 For long or dense papers, widen the page range and character cap — a small cap truncates the
 paper mid-Methods and still looks like success.
