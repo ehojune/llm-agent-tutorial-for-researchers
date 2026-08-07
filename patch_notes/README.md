@@ -8,6 +8,7 @@
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
+| 17:33 | [`1ae45fc`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/1ae45fc) | 브리핑이 **Claude 예약 작업 기능**으로 돌아간다는 점을 README에 명시. 사이드바 *Scheduled*에서 직접 시간을 바꾸거나 꺼둘 수 있다는 것, 그리고 앱이 켜져 있어야 도는 이유까지 |
 | 17:26 | [`b56a7ac`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/b56a7ac) | 브리핑이 최종 5편의 **초록을 읽고** 논문 설명을 씁니다. 그전엔 제목만 보고 추측했습니다. 스크리닝은 제목으로만 해서 속도는 그대로. 그리고 실행 로그(스캔 수, 검색 파라미터, 주제별 히트 수)를 브리핑 본문에서 **뺐습니다** — 너무 넓어 건너뛴 주제와 0건인 주제만 맨 아래 한 줄로 남깁니다 |
 | 17:13 | [`2f4e59f`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/2f4e59f) | 브리핑에 무엇이 들어가야 하는지 명시. 논문마다 영문 제목·저널·날짜·PubMed 링크·**무슨 논문인지**·**왜 골랐는지**, 그리고 마지막에 **전체 총평** 3~5줄 |
 | 17:11 | [`74bb504`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/74bb504) | 브리핑 본문을 **사용자 언어로** 씁니다. 위키의 영어 전용 규칙은 `sources/`와 `wiki/`에만 적용되고, 브리핑은 사람이 읽는 글이라 별개입니다. 논문 제목과 저널명은 영문 그대로 |
