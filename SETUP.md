@@ -127,20 +127,78 @@ Create the wiki folder first if it doesn't exist.
 
 ## Step 4 — Korean humanizer skill
 
-Install the `humanizer` skill from DaleSeo/korean-skills (MIT) into the user's skills folder:
+Only relevant if the user writes Korean. Skip the whole step otherwise.
+
+### 4a. Install
 
 ```bash
 git clone --depth 1 https://github.com/DaleSeo/korean-skills /tmp/korean-skills
 cp -r /tmp/korean-skills/skills/humanizer ~/.claude/skills/humanizer
 ```
 
-(Windows: `%USERPROFILE%\.claude\skills\humanizer`. No git? Fetch the files under
-`skills/humanizer/` from the GitHub API instead.) Skip only if the folder already exists.
+Windows equivalent — `/tmp` does not exist, so clone somewhere real:
+
+```bash
+git clone --depth 1 https://github.com/DaleSeo/korean-skills "$TEMP/korean-skills"
+cp -r "$TEMP/korean-skills/skills/humanizer" "$USERPROFILE/.claude/skills/humanizer"
+```
+
+No git? Fetch the files under `skills/humanizer/` from the GitHub API instead. Skip the install
+only if the folder already exists.
+
+### 4b. Ask whether it should apply automatically, and how widely
+
+Installing the skill only makes it *available*. Without a standing instruction it fires when the
+user asks for it and never otherwise — which is not what most people expect from "설치했다".
+
+Ask, and offer three scopes:
+
+| Scope | Where the instruction goes | Effect |
+|---|---|---|
+| **모든 대화 (recommend this)** | `~/.claude/CLAUDE.md` (Windows: `%USERPROFILE%\.claude\CLAUDE.md`) | Korean written in any project follows the patterns |
+| 이 위키에서만 | `{wiki}/CLAUDE.md` | applies only when working in the wiki folder |
+| 부를 때만 | nowhere | "자연스럽게 해줘" still works; nothing automatic |
+
+Recommend the global scope, and give the actual reason: the agent writes Korean in every
+conversation — chat replies, briefings, commit messages, summaries — and only a small slice of
+that happens inside the wiki. Wiki *content* is English by policy, so a wiki-only scope aims the
+rule at the one place it least applies.
+
+Append this block to the chosen file (translate the headings if you like; keep the substance):
+
+```markdown
+## 한국어 글쓰기 기본값 — humanizer
+
+AI가 쓴 한국어에는 40가지 특징적 패턴이 있습니다: 쉼표 과다, 번역투(`에 대해` / `를 통해` /
+`되어진다` / `에 의해`), 품사 다양성 부족, AI 상투어, 불필요한 복수형 `-들`, `~적 N` 연쇄,
+단조로운 문장 리듬 등. 근거는 KatFishNet 논문(AUC 94.88%)이고, 전체 목록은
+`~/.claude/skills/humanizer/SKILL.md`에 있습니다.
+
+**기본 동작 — 한국어를 쓰는 모든 응답에 자동 적용:** 그 패턴들을 피해서 씁니다. 자연스러운 쉼표
+밀도, 변화 있는 문장 길이, 딱딱한 한자어·번역투 대신 익은 우리말. 이때 humanizer 스킬의 전체
+분석 워크플로는 **돌리지 않습니다** — 패턴을 알고 처음부터 그렇게 쓰면 됩니다. 매 응답마다
+탐지·재작성을 돌리면 느리고, 짧은 대답까지 망가집니다.
+
+**명시적 호출:** 사용자가 기존 한국어 글을 주면서 "자연스럽게 해줘", "AI 흔적 지워줘", "humanize"
+같이 말하면 그때 `humanizer` 스킬을 불러 전체 워크플로(패턴 탐지, 심각도 S1/S2/S3, 전후 비교,
+의미 보존 검증)를 돌립니다.
+
+**고치기 전에 세어보기.** 실제 텍스트의 패턴 수를 먼저 세세요. 이미 사람 범위 안인데 길이가
+문제인 경우가 많습니다. `되어진다`, `가지고 있다`, `에 있어서`는 0이어야 합니다.
+```
+
+If the user already has such a block (their own wording, or from a previous run), leave it alone
+and say so rather than appending a second copy.
 
 ## Step 5 — Verify, then give the tour
 
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
-and `briefing/PROMPT.md` written · scheduled task registered · humanizer installed.
+and `briefing/PROMPT.md` written · scheduled task registered · humanizer installed, with its
+scope chosen and the block appended (or automatic application explicitly declined).
+
+When you mention the schedule to the user, call it by the name they see in the sidebar — **루틴**
+in Korean. "scheduled task" is the internal name and will send them looking for a menu entry that
+is not there.
 
 Then close with a short tour **in the user's language**:
 
@@ -155,7 +213,9 @@ Then close with a short tour **in the user's language**:
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.
-- **Humanizer**: 한국어 글을 다듬고 싶을 때 "이 글 자연스럽게 해줘".
+- **Humanizer**: if they chose automatic application, tell them it is already on and that they do
+  not need to ask each time — and that the scope is one line in the file you edited, so it can be
+  narrowed or turned off later. Either way: 기존 글을 고칠 땐 "이 글 자연스럽게 해줘".
 - **Recommended next step — project base**: for each ongoing research project, a GitHub repo or
   Notion page can hold the *work itself* (README, plans, code, data locations) — the wiki holds
   what you learned, the project base holds the work. Its killer use: when a conversation runs

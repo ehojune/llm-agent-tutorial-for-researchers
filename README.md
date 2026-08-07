@@ -35,8 +35,10 @@ Claude가 이 저장소를 읽고 몇 가지를 물어본 뒤(연구 분야, 위
    열었을 때 밀린 브리핑을 잡아서 해줍니다.
 3. **한국어 humanizer 스킬** — [DaleSeo/korean-skills](https://github.com/DaleSeo/korean-skills)의
    `humanizer`를 함께 설치합니다. AI가 쓴 한국어 특유의 패턴 40가지(쉼표 과다, 번역투 등)를
-   찾아 자연스럽게 고쳐주는 스킬로, 한국어로 글 쓸 일이 있을 때 "자연스럽게 해줘" 하면
-   발동합니다.
+   찾아 자연스럽게 고쳐주는 스킬입니다. 설치 중에 **항상 적용할지, 어디까지 적용할지** 물어봅니다
+   — 모든 대화에 적용(권장), 이 위키에서만, 아니면 부를 때만. 항상 적용을 골라도 매번 무거운
+   분석을 돌리는 게 아니라 **한국어를 쓸 때 그 패턴들을 피해서 쓰는 기본값**이 되는 것이고,
+   기존 글을 고칠 땐 "자연스럽게 해줘" 하면 전체 분석·재작성이 돕니다.
 
 ## 두 가지 버전
 
@@ -75,10 +77,10 @@ Claude가 이 저장소를 읽고 몇 가지를 물어본 뒤(연구 분야, 위
 
 ## 위키 구경하기
 
-<img width="1920" height="1888" alt="image" src="https://github.com/user-attachments/assets/553c6c02-9ea7-4d8e-b9dc-81a220743670" />
-
 그래프 뷰로 훑고 싶으면 [Obsidian](https://obsidian.md/)(무료)을 설치하고 wiki 폴더를
 Vault로 여세요. 읽기만 하므로 에이전트 작업과 충돌하지 않습니다.
+
+<img width="800" alt="Obsidian 그래프 뷰로 본 LLM Wiki — 논문 페이지들이 태그와 [[wikilink]]로 이어진 모습" src="https://github.com/user-attachments/assets/553c6c02-9ea7-4d8e-b9dc-81a220743670" />
 
 ---
 
