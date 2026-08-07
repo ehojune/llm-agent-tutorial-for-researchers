@@ -116,14 +116,48 @@ Create the wiki folder first if it doesn't exist.
    missed briefings.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
-6. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): daily at the chosen
+6. **Pre-approve the tools the briefing needs.** Do not skip this — it is the difference between
+   a briefing that runs and one that does not. A scheduled run happens while the user is away, so
+   a permission prompt does not get answered: the run stops there, writes nothing, and sends no
+   notification. Write `{wiki}/.claude/settings.json`:
+
+   ```json
+   {
+     "permissions": {
+       "allow": [
+         "Bash(curl *)",
+         "Bash(python scan_interests.py)",
+         "Bash(python3 scan_interests.py)",
+         "Read",
+         "Write",
+         "Edit",
+         "Glob",
+         "Grep",
+         "PushNotification"
+       ]
+     }
+   }
+   ```
+
+   Scoped to the wiki folder, so it grants nothing anywhere else. `curl` is there for PubMed;
+   narrow it further if the user prefers. If the chosen channel is email/Slack/Notion, add that
+   connector's tool too.
+
+7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): daily at the chosen
    time, working directory = the wiki folder, instruction:
    *"Open briefing/PROMPT.md in this folder and follow it."*
    - If your environment has no scheduled-task capability (e.g. plain CLI), say so and tell
      the user the schedule needs the Claude Desktop app; meanwhile "브리핑 해줘" runs it on
      demand.
-7. Tell the user plainly: the machine must be on at briefing time; if it wasn't, the catch-up
-   rule kicks in the next time they open Claude in the wiki folder.
+
+8. **Run it once now, with the user watching**, and check that it wrote `briefings/{today}.md`,
+   printed the briefing in the session, and fired the notification. Any tool the settings file
+   missed will prompt during this run; approving it here stores the approval on the task. A
+   schedule that has never completed once is not set up, it is only scheduled.
+
+9. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
+   minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
+   next time they open Claude in the wiki folder.
 
 ## Step 4 — Korean humanizer skill
 
@@ -193,8 +227,9 @@ and say so rather than appending a second copy.
 ## Step 5 — Verify, then give the tour
 
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
-and `briefing/PROMPT.md` written · scheduled task registered · humanizer installed, with its
-scope chosen and the block appended (or automatic application explicitly declined).
+and `briefing/PROMPT.md` written · `.claude/settings.json` written · scheduled task registered
+**and run once successfully** · humanizer installed, with its scope chosen and the block appended
+(or automatic application explicitly declined).
 
 When you mention the schedule to the user, call it by the name they see in the sidebar — **루틴**
 in Korean. "scheduled task" is the internal name and will send them looking for a menu entry that
