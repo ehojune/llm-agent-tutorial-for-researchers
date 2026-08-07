@@ -166,10 +166,11 @@ Create the wiki folder first if it doesn't exist.
 7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): **recurring, daily** at
    the chosen time, working directory = the wiki folder, instruction:
    *"Open briefing/PROMPT.md in this folder and follow it."*
-   - **Recurring, not one-shot.** A one-shot task disables itself the moment it fires, and its
-     session goes with it — the user reads the notification, looks at something else, comes back,
-     and cannot find the briefing conversation again. A recurring task stays in the sidebar, so
-     the conversation is still there tomorrow.
+   - **Recurring, not one-shot — including when you are only testing.** A one-shot task disables
+     itself the moment it fires, and its session goes with it — the user reads the notification,
+     looks at something else, comes back, and cannot find the briefing conversation again. A
+     recurring task stays in the sidebar, so the conversation is still there tomorrow. If you
+     need a test run, register it as daily and let it fire; never make a throwaway one-shot.
    - If your environment has no scheduled-task capability (e.g. plain CLI), say so and tell
      the user the schedule needs the Claude Desktop app; meanwhile "브리핑 해줘" runs it on
      demand.
@@ -179,9 +180,18 @@ Create the wiki folder first if it doesn't exist.
    missed will prompt during this run; approving it here stores the approval on the task. A
    schedule that has never completed once is not set up, it is only scheduled.
 
-9. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
-   minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
-   next time they open Claude in the wiki folder.
+9. **Teach the daily "권한 무시" click, right here at setup.** The routine opens a *new
+   conversation every day*, and the approvals from yesterday's conversation do not carry over —
+   so `.claude/settings.json` alone does not guarantee a silent run. In that day's routine
+   conversation the user clicks **권한 무시** (bypass permissions), bottom-left of the input box,
+   once. Show them where it is; the README has a screenshot at `images/routine-permission-bypass.png`.
+   Say plainly why it is safe here: the briefing only scans the wiki folder, searches PubMed, and
+   writes `briefings/{date}.md`. And say plainly that it is a daily chore for now — routing the
+   briefing to Slack or email later removes the need to check in at all.
+
+10. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
+    minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
+    next time they open Claude in the wiki folder.
 
 ## Step 4 — Korean humanizer skill
 
@@ -252,7 +262,8 @@ and say so rather than appending a second copy.
 
 Verify: folder tree exists · rulebook present with the extras appended · `briefing/interests.md`
 and `briefing/PROMPT.md` written · permissions asked about, and `.claude/settings.json` written
-if granted · scheduled task registered **as recurring** and **run once successfully** · humanizer
+if granted · scheduled task registered **as recurring** and **run once successfully** · the daily
+**권한 무시** click explained · humanizer
 installed, with its scope chosen and the block appended
 (or automatic application explicitly declined).
 
@@ -270,6 +281,8 @@ Then close with a short tour **in the user's language**:
   If yes, create the first entry right away.
 - **Asking questions**: answers come only from ingested papers; if none exists, Claude says so
   and asks for the PDF. Good answers can be saved as overview pages ("이거 overview로 저장해줘").
+- **The daily 권한 무시**: repeat it in the tour — each day's routine conversation is new, so one
+  click on **권한 무시** in that conversation keeps the briefing from stalling on a prompt.
 - **Tuning the briefing**: it is meant to be corrected out loud, not edited by hand. "그건 추천하지
   마" drops a subject for good; "이런 것도 챙겨줘" adds one. Tell the user this on day one — a
   briefing nobody corrects stays generic, and the first week is when it is furthest off.
