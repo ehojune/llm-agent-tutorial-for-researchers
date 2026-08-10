@@ -48,9 +48,28 @@ lines you write about them are true. Five abstracts costs one request.
    `sort=date&retmax=4` is doing real work. Without it you get an arbitrary handful out of
    however many matched, presented as though it were a selection.
 
-   **Read `count` in the esearch response.** More than ~150 hits in the window means that topic is
-   a field name rather than a query — skip it. Never sample from it. Name the skipped topics in
-   the one-line run note at the foot of the briefing (step 4), not in the body.
+   **Tag every term `[tiab]`.** Build `{TOPIC}` by suffixing each word with `[tiab]` and joining
+   with `AND` — `forensic genetics` becomes `forensic[tiab] AND genetics[tiab]`, URL-encoded as
+   `forensic%5Btiab%5D+AND+genetics%5Btiab%5D`. Bare terms go through PubMed's automatic term
+   mapping into `[All Fields]`, which matches author affiliations and explodes MeSH headings: a
+   cardiology paper out of a Department of Forensic Medicine is a `forensic genetics` hit, and so
+   is a gut-microbiome paper. Restricting to title/abstract cuts that without costing real
+   papers — measured over a 30-day window: `forensic genetics` 91 → 21, `degraded dna` 1349 → 17,
+   `RNA splicing variant pathogenic` 19 → 14, and `Y-STR haplotype population` 1 → 1. Do **not**
+   quote the whole topic as one phrase (`"forensic genetics"[tiab]`); that demands the exact
+   wording and takes the last two of those to 0.
+
+   **Read `count` in the esearch response.**
+   - **Over ~150** — a field name rather than a query. Skip it; never sample from it. If it is a
+     line from the AUTO block and it has been skipped on several consecutive mornings, it will
+     keep being regenerated, so move it under `## Excluded topics` in `briefing/interests.md` and
+     tell the user in the closing note that you did. Editing inside the AUTO markers does
+     nothing — the block is rewritten on the next run.
+   - **Zero** — retry that one topic once at `reldate=30` before giving up. A specific query in a
+     small field is legitimately empty most weeks (`Y-STR haplotype population`: 0 over 7 days,
+     0 over 14, 1 over 30), and a briefing built only from 7-day windows in such a field has
+     nothing to report on most mornings. Say which topics needed the wider window only if that is
+     what kept the briefing short.
 
    Sleep ~0.3 s between calls; NCBI asks for no more than 3 requests per second.
 

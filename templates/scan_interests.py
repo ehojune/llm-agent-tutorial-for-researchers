@@ -16,7 +16,9 @@ Outputs:
 No third-party deps (no PyYAML required). Run:  python scan_interests.py
 """
 
+import codecs
 import json
+import locale
 import re
 from datetime import date, datetime
 from pathlib import Path
@@ -63,6 +65,42 @@ STOP_TAGS = {
 
 AUTO_START = "<!-- AUTO:wiki-interests START -->"
 AUTO_END = "<!-- AUTO:wiki-interests END -->"
+
+
+# --- reading ---------------------------------------------------------------
+def read_text_any(path):
+    """Read a markdown file in whatever encoding Windows left it in.
+
+    Tools on Windows do not agree, and the disagreement is silent:
+
+      - PowerShell 5.1 `Out-File` (and `>`) defaults to UTF-16LE with a BOM
+      - `-Encoding utf8` on 5.1 writes UTF-8 *with* a BOM
+      - `Set-Content` defaults to the system ANSI codepage — cp949 on a Korean
+        install — with no BOM at all
+      - Notepad offers all of these
+
+    Read as plain UTF-8, a BOM defeats parse_frontmatter's startswith("---")
+    and the page drops out of the profile; UTF-16 is worse still, decoding to
+    NULs and replacement characters that update_briefing() then writes back
+    over the user's own queries. So sniff the BOM first, then try UTF-8, then
+    fall back to the locale codepage.
+
+    Files are always rewritten as UTF-8, so a wiki converges on one encoding.
+    """
+    raw = path.read_bytes()
+    for bom, enc in (
+        (codecs.BOM_UTF8, "utf-8-sig"),
+        (codecs.BOM_UTF32_LE, "utf-32"),   # before UTF-16LE: shares its FF FE prefix
+        (codecs.BOM_UTF32_BE, "utf-32"),
+        (codecs.BOM_UTF16_LE, "utf-16"),
+        (codecs.BOM_UTF16_BE, "utf-16"),
+    ):
+        if raw.startswith(bom):
+            return raw.decode(enc)
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw.decode(locale.getpreferredencoding(False), errors="replace")
 
 
 # --- frontmatter parsing --------------------------------------------------
@@ -144,7 +182,7 @@ def scan():
     topics = {}  # tag -> {score, counts: {kind: n}, last_seen}
     files = 0
     for path in WIKI_DIR.rglob("*.md"):
-        text = path.read_text(encoding="utf-8", errors="replace")
+        text = read_text_any(path)
         fm = parse_frontmatter(text)
         tags = fm.get("tags") or []
         if not tags:
@@ -235,7 +273,13 @@ def update_briefing(ranked):
     block_lines.append(AUTO_END)
     block = "\n".join(block_lines)
 
-    text = BRIEFING_INTERESTS.read_text(encoding="utf-8", errors="replace")
+    text = read_text_any(BRIEFING_INTERESTS)
+    if "\x00" in text:
+        # An encoding read_text_any did not recognise. Writing now would put the
+        # mojibake back on disk and take the user's manual queries with it.
+        print(f"[skip] {BRIEFING_INTERESTS} is not readable as text — left untouched.")
+        print("       Re-save it as UTF-8 and run this again.")
+        return
     if AUTO_START in text and AUTO_END in text:
         text = re.sub(
             re.escape(AUTO_START) + r".*?" + re.escape(AUTO_END),
