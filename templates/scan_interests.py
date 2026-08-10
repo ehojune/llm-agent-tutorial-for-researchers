@@ -144,7 +144,11 @@ def scan():
     topics = {}  # tag -> {score, counts: {kind: n}, last_seen}
     files = 0
     for path in WIKI_DIR.rglob("*.md"):
-        text = path.read_text(encoding="utf-8", errors="replace")
+        # utf-8-sig, not utf-8: a leading BOM would otherwise defeat the
+        # `startswith("---")` check in parse_frontmatter and drop the whole page
+        # from the profile without a word. Windows produces BOMs by default —
+        # Notepad, and PowerShell 5.1's Set-Content / Out-File.
+        text = path.read_text(encoding="utf-8-sig", errors="replace")
         fm = parse_frontmatter(text)
         tags = fm.get("tags") or []
         if not tags:
@@ -235,7 +239,7 @@ def update_briefing(ranked):
     block_lines.append(AUTO_END)
     block = "\n".join(block_lines)
 
-    text = BRIEFING_INTERESTS.read_text(encoding="utf-8", errors="replace")
+    text = BRIEFING_INTERESTS.read_text(encoding="utf-8-sig", errors="replace")
     if AUTO_START in text and AUTO_END in text:
         text = re.sub(
             re.escape(AUTO_START) + r".*?" + re.escape(AUTO_END),
