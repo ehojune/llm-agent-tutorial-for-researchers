@@ -185,11 +185,39 @@ Create the wiki folder first if it doesn't exist.
    sandbox: an approved `Bash` or `PowerShell` call can still reach any path the user's account
    can. Say that plainly rather than implying the grant confines Claude to the wiki.
 
+   **Expect this one write to be questioned, and do not fight it.** A settings file that grants
+   `Bash` is the agent widening its own permissions, so writing it can draw a confirmation prompt
+   or a flat refusal from the permission classifier even when every other write in this setup goes
+   through. That is the safety check working. Do not retry it in a different shape or route it
+   through a shell command. Show the user the JSON, tell them where it goes
+   (`{wiki}/.claude/settings.json`), and let them approve the write or paste it themselves — then
+   carry on with step 7. The briefing does not depend on this file; the task's own permission mode
+   does that job.
+
    If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
 
 7. Create a **scheduled task** (Claude Desktop scheduled-tasks feature): **recurring, daily** at
    the chosen time, working directory = **the wiki folder itself**, instruction:
    *"Open briefing/PROMPT.md in this folder and follow it."*
+
+   First check whether a briefing task already exists (`list_scheduled_tasks`) and reuse it.
+   Setup gets re-run — from a second machine, or after a template update — and a second daily
+   task means two briefings every morning, each unaware of the other's file.
+
+   - **You can create the task, but you cannot finish it. Hand the last two settings to the
+     user and watch them do it.** The scheduled-task tool takes an id, a prompt, a description
+     and a schedule — **the folder and the permission mode are not among its parameters**, and
+     they are not in the task's `SKILL.md` either. The official docs say the same: *"Schedule,
+     folder, model, and enabled state are not in this file: change them through the Edit form."*
+     These two are exactly the settings step 9 lists as the causes of a stalling briefing, so a
+     task you create and never hand over is a task that stops on its first shell command.
+
+     Say so plainly rather than reporting the routine as done: *"루틴은 만들어 뒀는데, 폴더와
+     권한 모드 두 가지는 제가 못 바꿉니다. 사이드바 **루틴** → 브리핑 → **편집**을 열어
+     주시면 어디를 눌러야 하는지 짚어 드릴게요."* Then walk them through it and confirm what
+     they see before moving on. A folder has to be picked before the form will save, and if
+     that folder has never been trusted, Desktop asks them to trust it first — tell them that
+     prompt is expected.
    - **Set the task's permission mode to 자동 (auto)** in the same form, next to the model picker.
      This is what makes unattended runs actually run. In Manual or 편집 자동 수락 the task stops at
      a permission prompt on every shell command, and step 9 explains why the other workarounds
@@ -233,9 +261,23 @@ Create the wiki folder first if it doesn't exist.
    writes `briefings/{date}.md`. The only thing it sends out is a PubMed search — plus the briefing
    itself, if they chose email, Slack, or Notion. Wiki files are never uploaded anywhere.
 
-10. Tell the user plainly: the machine must be on at briefing time, and the run can start a few
-    minutes late rather than on the dot. If the machine was off, the catch-up rule kicks in the
-    next time they open Claude in the wiki folder.
+10. Tell the user plainly: the app must be open at briefing time, and the run can start a few
+    minutes late rather than on the dot.
+
+    **Say the word "sleep" out loud.** "The app is open" is not the condition — a sleeping
+    machine skips the run outright, and for a 09:00 briefing on a laptop that closed the night
+    before, sleep is the likeliest reason a morning comes up empty. Point them at
+    **설정 → 데스크탑 앱 → 일반 → 컴퓨터 깨어 있게 유지**. Closing the lid still sleeps it.
+
+    Missed runs are then covered twice, and it is worth naming both so nobody waits on the wrong
+    one. Desktop itself starts **one** catch-up run on wake for the most recent missed time
+    (older ones are discarded, and it looks back seven days). The rulebook's catch-up rule is the
+    backstop for what that misses, and it no-ops when today's `briefings/` file already exists.
+
+    If they want a briefing that lands whether or not the machine is on, mention that a **cloud
+    routine** runs server-side — but only as a pointer, not as part of this setup: it gets a
+    fresh clone rather than their wiki folder, so the interest profile and `briefings/` archive
+    would need somewhere else to live.
 
 ## Step 4 — Korean humanizer skill
 
@@ -244,6 +286,7 @@ Only relevant if the user writes Korean. Skip the whole step otherwise.
 ### 4a. Install
 
 ```bash
+mkdir -p ~/.claude/skills
 git clone --depth 1 https://github.com/DaleSeo/korean-skills /tmp/korean-skills
 cp -r /tmp/korean-skills/skills/humanizer ~/.claude/skills/humanizer
 ```
@@ -251,9 +294,15 @@ cp -r /tmp/korean-skills/skills/humanizer ~/.claude/skills/humanizer
 Windows equivalent — `/tmp` does not exist, so clone somewhere real:
 
 ```bash
+mkdir -p "$USERPROFILE/.claude/skills"
 git clone --depth 1 https://github.com/DaleSeo/korean-skills "$TEMP/korean-skills"
 cp -r "$TEMP/korean-skills/skills/humanizer" "$USERPROFILE/.claude/skills/humanizer"
 ```
+
+**Do not drop the `mkdir -p`.** On a machine that has never installed a skill, `~/.claude`
+exists but `~/.claude/skills` does not, and `cp -r` will not create a missing parent — it fails
+with `cp: cannot create directory …: No such file or directory` and the step reads as a broken
+repository URL rather than a missing folder.
 
 No git? Fetch the files under `skills/humanizer/` from the GitHub API instead. Skip the install
 only if the folder already exists.
