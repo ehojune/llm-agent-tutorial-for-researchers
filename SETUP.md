@@ -185,14 +185,20 @@ Create the wiki folder first if it doesn't exist.
    sandbox: an approved `Bash` or `PowerShell` call can still reach any path the user's account
    can. Say that plainly rather than implying the grant confines Claude to the wiki.
 
-   **Expect this one write to be questioned, and do not fight it.** A settings file that grants
-   `Bash` is the agent widening its own permissions, so writing it can draw a confirmation prompt
-   or a flat refusal from the permission classifier even when every other write in this setup goes
-   through. That is the safety check working. Do not retry it in a different shape or route it
-   through a shell command. Show the user the JSON, tell them where it goes
-   (`{wiki}/.claude/settings.json`), and let them approve the write or paste it themselves — then
-   carry on with step 7. The briefing does not depend on this file; the task's own permission mode
-   does that job.
+   **Let the approval prompt happen, and warn the user it is coming.** A settings file that grants
+   `Bash` is the agent widening its own permissions, so this write — alone among the writes in
+   this setup — is supposed to stop and ask. Do not try to slip it past: no shell redirect, no
+   rewriting it in a different shape, no other tool. Say what is about to appear and what
+   approving it means, then write the file and let them press the button:
+
+   > 방금 여쭤본 권한을 `{위키}/.claude/settings.json`에 적겠습니다. 이 파일을 쓰려고 하면
+   > 승인 창이 한 번 뜹니다 — 제가 제 권한을 넓히는 동작이라 자동으로는 통과되지 않게 돼
+   > 있어서요. 내용은 방금 설명드린 그대로고, 승인해 주시면 그대로 저장됩니다.
+
+   If the classifier refuses outright instead of prompting, stop there rather than looking for a
+   way around it: show them the JSON and the path and let them paste it themselves. Either way
+   the briefing does not depend on this file — the task's own permission mode in step 7 does that
+   job — so do not stall the setup over it.
 
    If the chosen channel is email/Slack/Notion, add that connector's tool to the list too.
 

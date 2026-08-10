@@ -121,3 +121,5 @@ If a user pointed you at this repository and asked to set it up ("나도 이거 
 - LLM Wiki 방법론: [안준용 교수, 고려대](https://gist.github.com/joonan30/cbce305684d079dbe9a3fbaefe4e3959) · 원안: [Andrej Karpathy](https://gist.github.com/karpathy/1dd0294ef9567971c1e4348a90d69285)
 - 확장판과 브리핑 시스템: 이호준 ([@ehojune](https://github.com/ehojune))
 - 한국어 humanizer 스킬: [DaleSeo/korean-skills](https://github.com/DaleSeo/korean-skills) (MIT)
+
+이 저장소는 [MIT 라이선스](LICENSE)입니다. 템플릿은 가져다 고쳐 쓰셔도 됩니다.
