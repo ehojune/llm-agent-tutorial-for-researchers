@@ -4,6 +4,14 @@
 
 날짜·시간은 커밋 시각(KST)입니다. 커밋 해시를 누르면 실제 변경 내용을 볼 수 있습니다.
 
+## 2026-08-10
+
+| 시간 | 커밋 | 주요 변경사항 |
+|---|---|---|
+| 14:21 | [`a1f3a1c`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/a1f3a1c) | **처음 세팅에서 실제로 걸린 세 곳.** 루틴은 만들어져도 폴더와 권한 모드는 Claude가 못 바꿉니다 — 예약 도구의 인자에 아예 없어서 사용자가 편집 폼에서 직접 눌러야 하는데, 그동안 문서는 Claude가 다 해주는 것처럼 읽혔습니다. humanizer 설치는 `~/.claude/skills`가 없는 새 컴퓨터에서 `cp -r`이 그대로 죽습니다(`mkdir -p` 추가). 그리고 **잠자기** — 앱이 켜져 있어도 컴퓨터가 자고 있으면 그날 브리핑은 건너뜁니다. 세팅을 다시 돌릴 때 루틴이 두 개 생기던 것도 막았습니다 |
+| 14:21 | [`bb29dac`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/bb29dac) | **PubMed 검색어를 제목·초록(`[tiab]`)으로 좁힙니다.** 문서가 나쁜 예로 든 `forensic genetics`는 7일에 13건이라 150건 기준에 안 걸리는데, 그 13건에 폐고혈압·장내미생물·뇌허혈 논문이 섞여 나옵니다 — 저자 소속의 "Department of Forensic Medicine"까지 매칭되는 탓입니다. 건수로는 잡히지 않는 문제라 `[tiab]`로 바꿨고, 30일 기준 `degraded dna`가 1349건에서 17건으로 줄면서 좋은 검색어인 `Y-STR haplotype population`은 1건 그대로입니다. 0건인 주제는 `reldate=30`으로 한 번 더 봅니다 — 좁은 분야는 7일에 정말 아무것도 없습니다 |
+| 14:20 | [`af65065`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/commit/af65065) | **BOM 붙은 위키 페이지가 관심사 집계에서 통째로 빠지던 문제.** 메모장이나 PowerShell로 저장하면 파일 맨 앞에 BOM이 붙고, 그러면 frontmatter 인식이 실패해 그 페이지의 태그가 전부 사라집니다 — 오류 한 줄 없이 조용히. 5개 중 4개만 스캔되던 걸 확인하고 `utf-8-sig`로 고쳤습니다 |
+
 ## 2026-08-07
 
 | 시간 | 커밋 | 주요 변경사항 |
@@ -42,3 +50,7 @@
   [`templates/briefing-prompt.md`](../templates/briefing-prompt.md)를 다시 받아
   `{위키폴더}/briefing/PROMPT.md`로 덮어쓰면 됩니다. Claude에게 "브리핑 프롬프트 최신으로
   업데이트해줘"라고 해도 됩니다.
+- **8-10의 BOM 문제는 쓰던 위키에도 해당됩니다.** 위키 페이지를 메모장으로 열어 저장한 적이
+  있다면 그 페이지가 관심사에서 빠져 있을지 모릅니다.
+  [`templates/scan_interests.py`](../templates/scan_interests.py)도 같이 새로 받아
+  `{위키폴더}/scan_interests.py`를 덮어쓰세요.
