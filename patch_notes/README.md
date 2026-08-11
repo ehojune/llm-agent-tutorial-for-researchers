@@ -10,6 +10,8 @@ PR로 들어온 변경은 스쿼시 머지라 개별 커밋이 main에 남지 �
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
+| 17:24 | [`bd076f0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/bd076f0) | **비생명과학 위키의 규칙집이 자기 브리핑을 금지하던 문제** (Codex 리뷰). arXiv로 바꿔도 규칙집에 붙는 웹 예외 조항은 "PubMed E-utilities"라고 이름으로 못박혀 있어서, 무인 실행 중인 에이전트가 네 가지 규칙을 정확히 지킨 끝에 검색을 거부합니다 — 브리핑은 안 나오고 이유도 안 남습니다. 예외가 이제 `briefing/PROMPT.md`가 지정한 API를 가리킵니다. 루틴이 뭘 밖으로 보내는지 설명하는 안내 문구도 같이 맞췄습니다 |
+| 17:18 | [`02a445d`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/02a445d) | **재실행 가드를 문단이 아니라 각 write에** (Codex 리뷰). 앞 커밋이 재실행 규칙을 2단계 서두에만 적고 아래 번호 단계는 "빈 `index.md`를 만들라" 그대로 뒀습니다. `index.md`는 ingest마다 한 줄씩 붙는 페이지 카탈로그라, 쓰던 위키에서 그대로 따르면 지금까지 넣은 논문의 목차가 통째로 사라집니다(테스트 위키에서 4편 → 0편 재현). 이제 규칙집과 `index.md`는 없을 때만 만들고, `scan_interests.py`는 반대로 덮어쓰는 게 맞다고 명시했습니다 |
 | 16:12 | [`3c2be4f`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/3c2be4f) | **arXiv 경로가 NCBI 페이싱을 물려받던 문제** (Codex 리뷰). 새 섹션을 "나머지는 그대로"로 닫았더니 `0.3초 대기` 한 줄까지 딸려갔는데, arXiv 이용약관은 3초에 한 번, 연결도 하나만 쓰라고 합니다 — 딱 10배 빠릅니다. 걸려도 간헐적이라 사용자에겐 rate limit이 아니라 불안정한 브리핑으로 보입니다. 주제당 호출이 1번(PubMed는 3번)이라 10개 주제 기준 대기는 30초 남짓입니다 |
 | 15:44 | [`b2fc73a`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/b2fc73a) | arXiv 엔드포인트를 https로. 평문 URL을 문서에 둘 이유가 없습니다 |
 | 15:21 | [`d0eeff0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/d0eeff0) | **`pip install pypdf`가 PEP 668로 거부되는 환경(Ubuntu 23.04+, Homebrew Python) 대비.** 첫 논문을 넣는 순간 `externally-managed-environment`로 막히는데, 세팅은 이미 성공으로 끝난 뒤라 제일 당황스러운 지점입니다. `--break-system-packages` 대신 위키 루트에 `.venv`를 한 번 만들어 그 python을 쓰라는 폴백을 규칙집에 넣었습니다 |
