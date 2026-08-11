@@ -178,7 +178,7 @@ science, ML, astronomy, …), setup swaps step 2's URLs for the arXiv API, and t
 discipline applies — screen on titles, read only the finalists' abstracts:
 
 ```
-https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=4
+https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=30
 ```
 
 - `{QUERY}` shape: `abs:%22perovskite+solar+cells%22+AND+cat:cond-mat.mtrl-sci` — a quoted
@@ -186,8 +186,18 @@ https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sor
   syntax and mean nothing here.
 - Each Atom entry already carries title, abstract, dates, and link, so the esummary and efetch
   calls fall away — one call per topic covers steps 2 and 3's fetches.
-- There is no date-window parameter: the feed is newest-first, so drop entries whose
-  `published` is older than 7 days yourself (30 on the zero-result retry).
+- **There is no date window, so `max_results` is 30, not 4.** The filtering PubMed does with
+  `reldate` you do yourself: keep entries whose `published` is within 7 days (30 on the
+  zero-result retry), then take the newest 4 of those. Asking for 4 outright returns the newest
+  4 *ever* — for the perovskite query above, four entries reaching back two months, of which one
+  is actually recent.
+- **Ignore `totalResults`; the ~150 rule in step 2 does not apply here.** That count is
+  corpus-wide, not windowed, so it says 299 for the focused perovskite query — a topic with
+  exactly one new paper this week would be thrown out as "too broad". The arXiv equivalent of
+  that rule is: if **all 30** entries are still inside the window, there are more than 30 papers
+  a week on it, so it is a category and not a topic — skip it, and treat it like the over-150
+  case. (Measured: `cat:cond-mat.mtrl-sci` alone returns 30 of 30 inside the window;
+  `abs:"perovskite solar cells" AND cat:cond-mat.mtrl-sci` returns 1.)
 - Dedupe by arXiv id; link entries as `https://arxiv.org/abs/{id}`.
 - **Sleep ~3 s between calls, one at a time — not the 0.3 s above.** That figure is NCBI's;
   arXiv's terms ask for "no more than one request every three seconds, and … a single
