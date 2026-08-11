@@ -79,6 +79,30 @@ lines you write about them are true. Five abstracts costs one request.
    mornings running. Drop
    correction/erratum/retraction notices. Prefer papers matching more than one topic.
 
+   **Spread them across topics — take one per topic per round.** Go through the topics that
+   returned anything, newest first within each, taking one paper each; then go round again, and
+   again, until you have five. Interests differ wildly in publication volume, so taking the
+   newest five outright hands the whole briefing to the busiest one: a run of four
+   materials-science seed queries put four of its five papers under a single topic, and the
+   reader then sees a single-subject digest with no sign the others were searched at all.
+
+   Rounds settle the awkward splits by themselves — four productive topics give 2/1/1/1, two
+   give 3/2, one gives all five — so there is no cap to deadlock against.
+
+   **If the rounds run dry before five, go back for more before reporting a short briefing.**
+   Only four papers per topic reach this step (`retmax=4`; on the arXiv path, the newest four
+   in the window), which is plenty when several topics deliver and short when a single topic is
+   carrying the day. Re-query the productive topics with a larger `retmax`, and keep widening
+   until you have five or the topic's `count` is exhausted — a fixed second number does not do,
+   because dedupe against recent briefings, dropped errata, and title screening all eat into
+   whatever you fetch. On the arXiv path the 30 entries already retrieved usually cover it, so
+   look there first; if they do not, keep paging — `&start=30`, then `60`, and on — at the same
+   3-second cadence, stopping when you have five or an entry falls outside the window. A topic
+   can hold well over 30 papers inside the 30-day retry window (measured: one seed query had 45
+   across two pages), and the earlier breadth rule deliberately allows that. Neither path has a
+   fixed ceiling, on purpose: step 4's "fewer than 5" line is for when the papers do not exist,
+   not for when they were not asked for.
+
    Once the five are chosen — and only then — fetch their abstracts in a single call:
 
    ```
@@ -88,7 +112,9 @@ lines you write about them are true. Five abstracts costs one request.
    Write the "what it is" line from the abstract, not the title. Titles overstate and omit; a
    one-line description guessed from a title is how a briefing ends up describing a paper that
    does not exist. If a finalist's abstract shows it is not what the title implied, drop it and
-   promote the next candidate.
+   promote the next candidate — and when there is no next candidate, because the pool held
+   exactly five, widen again as above rather than reporting four. Abstract rejections are the
+   normal way this loop ends, not an exception to it.
 
    Relevance still beats the count: if fewer than 5 clear the bar, report fewer and say why
    rather than filling the quota with padding.
@@ -188,9 +214,18 @@ discipline applies — screen on titles, read only the finalists' abstracts:
 https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=30
 ```
 
-- `{QUERY}` shape: `abs:%22perovskite+solar+cells%22+AND+cat:cond-mat.mtrl-sci` — a quoted
-  phrase against abstracts, `cat:` pinning the subject area. `[tiab]` and `reldate` are PubMed
-  syntax and mean nothing here.
+- `{QUERY}` shape: **one `abs:` term per word, joined with `AND`**, plus `cat:` pinning the
+  subject area. `perovskite solar cells` becomes
+  `abs:perovskite+AND+abs:solar+AND+abs:cells+AND+cat:cond-mat.mtrl-sci`. `[tiab]` and
+  `reldate` are PubMed syntax and mean nothing here; `abs:` is what restricts a term to the
+  abstract, so it is the direct equivalent of tagging each term `[tiab]`.
+
+  **Do not quote the whole topic** (`abs:"solid state electrolyte interface"`) — same trap as
+  on the PubMed side, and it bites harder here. A quoted phrase demands that exact wording in
+  that exact order, so a topic phrased slightly differently than authors phrase it returns
+  nothing *at all* — not a thin week, an empty corpus. Measured over four materials-science
+  seed queries: quoted, two of the four returned 0 results ever; per-term, the same two return
+  30 and have a paper inside 30 days. The other two were unchanged or slightly better.
 - Each Atom entry already carries title, abstract, dates, and link, so the esummary and efetch
   calls fall away — one call per topic covers steps 2 and 3's fetches.
 - **There is no date window, so `max_results` is 30, not 4.** The filtering PubMed does with
@@ -204,7 +239,7 @@ https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sor
   that rule is: if **all 30** entries are still inside the **7-day** window, there are more than
   30 papers a week on it, so it is a category and not a topic — skip it, and treat it like the
   over-150 case. (Measured: `cat:cond-mat.mtrl-sci` alone returns 30 of 30 inside the window;
-  `abs:"perovskite solar cells" AND cat:cond-mat.mtrl-sci` returns 1.)
+  the same category with `perovskite`, `solar` and `cells` AND-ed on returns 1.)
 
   **Do not apply that cutoff to the 30-day retry.** 30 entries inside 30 days is about seven a
   week, which is a healthy topic, not a category — and the retry only runs for topics that

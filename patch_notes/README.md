@@ -6,6 +6,19 @@
 PR로 들어온 변경은 스쿼시 머지라 개별 커밋이 main에 남지 않기 때문에, 해시는 그 PR 안의
 커밋으로 연결됩니다.
 
+## 2026-08-12
+
+| 시간 | 커밋 | 주요 변경사항 |
+|---|---|---|
+| 03:43 | [`772f507`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/772f507) | **초록에서 논문이 탈락하면 보충이 안 되던 문제** (Codex 리뷰). 보충 루프는 제목 스크리닝 통과 5편에서 멈추고 초록은 그 뒤에 읽으니, 후보가 정확히 5편이면 "다음 후보로 교체"할 대상이 없습니다. 초록 탈락 시 같은 조건으로 다시 넓히도록 이었습니다 |
+| 03:39 | [`5166485`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/5166485) | **보충 규칙에서 고정 숫자를 완전히 뺐습니다** (Codex 리뷰). 한쪽 경로의 고정값을 조건으로 바꾸면서 다른 쪽에 또 고정값을 남기는 걸 세 번 반복했습니다 — `retmax=8` 다음이 `&start=30`(딱 한 페이지 더)이었죠. 이제 양쪽 다 "5편이 차거나 창·`count`가 소진될 때까지"이고, 어느 경로에도 상한이 없다고 명시했습니다 |
+| 03:35 | [`afd663f`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/afd663f) | **arXiv 쪽 30건 상한** (Codex 리뷰). 앞 커밋이 PubMed의 고정값을 조건으로 바꿔놓고 바로 옆에서는 arXiv에 "재조회 불필요"라고 적어 30건 상한을 못박고 있었습니다. 30일 재시도에서 실제로 닿습니다 — 한 시드 쿼리가 `start=0`에서 30건 전부 창 안, `start=30`에서 15건 더, 즉 30건짜리 조회 뒤에 45편이 있었습니다. 모자라면 `&start=30`으로 이어갑니다 |
+| 03:31 | [`b7417f6`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/b7417f6) | **보충 조회를 고정 `retmax=8`로 하던 문제** (Codex 리뷰). 최신 8건 중 4건 이상이 중복 제거·erratum 제외·제목 스크리닝에서 떨어지면 여전히 모자랍니다. 고정 숫자는 무엇을 넣든 같은 구멍이 남으니 숫자 대신 조건으로 바꿨습니다 — 5편이 차거나 `count`가 소진될 때까지 |
+| 03:26 | [`b50d6c7`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/b50d6c7) | **한 주제가 그날을 떠받치면 4편에서 멈추던 문제** (Codex 리뷰). 3단계에 도달하는 건 주제당 4편뿐이라(PubMed `retmax=4`, arXiv도 최신 4편만) "주제 1개면 5편"은 지킬 수 없는 약속이었습니다. 실측으로 arXiv는 7일 창에 8편이 있는데 4편으로 잘리고(이미 30건을 받아놨으니 재조회도 불필요), PubMed는 `retmax=8`이면 채워집니다. 모자랄 때만 되돌아가 채우도록 했습니다 — "5편 미만"은 논문이 없을 때 쓰는 말이지 안 물어봐서 없을 때가 아닙니다 |
+| 03:21 | [`42cd294`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/42cd294) | **주제 분산 규칙이 5편을 못 채우고 멈추던 문제** (Codex 리뷰). "다른 주제에 후보가 남아 있으면 한 주제에서 2편까지"는 주제 2개가 각각 3편 이상일 때 2+2에서 교착합니다 — 어느 쪽도 상한을 어기지 않고는 소진될 수 없으니까요. 상한 대신 **라운드로빈**으로 바꿨습니다. 후보 분포 7가지로 대조해 상한 방식은 2개에서 모자라고 라운드로빈은 전부 최대치에 도달하는 걸 확인했습니다 |
+| 03:11 | [`d8cdbb0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/d8cdbb0) | **브리핑 5편이 한 주제에 몰리던 문제.** 주제당 4편씩 받아 전체에서 5편을 고르면 논문이 많이 나오는 관심사가 브리핑을 독차지합니다 — 실제로 다른 주제 세 개에 후보가 남아 있는데도 5편 중 4편이 한 주제에서 나왔습니다. 짧은 브리핑보다 나쁜 게, 나머지 주제를 검색이나 했는지도 알 수 없으면서 완결된 답처럼 보인다는 점입니다. 다른 주제에 후보가 남아 있는 한 한 주제에서 2편까지만 뽑습니다 |
+| 03:10 | [`b624de6`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/b624de6) | **arXiv 검색어를 단어별로 쪼갭니다.** 어제 추가한 arXiv 경로가 주제 전체를 따옴표로 묶고 있었는데, 이건 같은 문서의 PubMed 쪽이 굵은 글씨로 경고하는 바로 그 실수입니다. arXiv에서는 더 아픕니다 — 저자들이 조금 다르게 표현하면 그 주 논문이 적은 게 아니라 **코퍼스 전체에서 0건**이 됩니다. 재료과학 시드 4개로 재보니 `solid state electrolyte interface`와 `thin film deposition uniformity`가 통째로 0건이었고, 브리핑은 그걸 "이번 주 신규 없음"이라고 보고했습니다. 단어별로 바꾸니 넷 다 논문을 냅니다 |
+
 ## 2026-08-11
 
 | 시간 | 커밋 | 주요 변경사항 |
