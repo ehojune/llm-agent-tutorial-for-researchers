@@ -95,9 +95,11 @@ lines you write about them are true. Five abstracts costs one request.
    carrying the day. Re-query the productive topics with a larger `retmax`, and keep widening
    until you have five or the topic's `count` is exhausted — a fixed second number does not do,
    because dedupe against recent briefings, dropped errata, and title screening all eat into
-   whatever you fetch. On the arXiv path nothing needs re-fetching: 30 entries were already
-   retrieved and only the display was truncated. Step 4's "fewer than 5" line is for when the
-   papers do not exist, not for when they were not asked for.
+   whatever you fetch. On the arXiv path the 30 entries already retrieved usually cover it, so
+   look there first; if they do not, page on with `&start=30` at the same 3-second cadence —
+   a topic can hold more than 30 papers inside the 30-day retry window (measured: one seed
+   query had 45), and the earlier breadth rule deliberately allows that. Step 4's "fewer than
+   5" line is for when the papers do not exist, not for when they were not asked for.
 
    Once the five are chosen — and only then — fetch their abstracts in a single call:
 
