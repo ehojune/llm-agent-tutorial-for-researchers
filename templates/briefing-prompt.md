@@ -87,8 +87,16 @@ lines you write about them are true. Five abstracts costs one request.
    reader then sees a single-subject digest with no sign the others were searched at all.
 
    Rounds settle the awkward splits by themselves — four productive topics give 2/1/1/1, two
-   give 3/2, one gives all five — so there is no cap to deadlock against and the count in step 4
-   still holds.
+   give 3/2, one gives all five — so there is no cap to deadlock against.
+
+   **If the rounds run dry before five, go back for more before reporting a short briefing.**
+   Only four papers per topic reach this step (`retmax=4`; on the arXiv path, the newest four
+   in the window), which is plenty when several topics deliver and exactly one short when a
+   single topic is carrying the day — and a topic that produced four this week usually has
+   more. Re-query the productive topics with a larger `retmax` (8 is enough) and fill from
+   there; on the arXiv path nothing needs re-fetching, since 30 entries were already retrieved
+   and only the display was truncated. Step 4's "fewer than 5" line is for when the papers do
+   not exist, not for when they were not asked for.
 
    Once the five are chosen — and only then — fetch their abstracts in a single call:
 
