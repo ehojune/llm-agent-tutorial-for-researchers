@@ -176,7 +176,7 @@ science, ML, astronomy, …), setup swaps step 2's URLs for the arXiv API, and t
 discipline applies — screen on titles, read only the finalists' abstracts:
 
 ```
-http://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=4
+https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=4
 ```
 
 - `{QUERY}` shape: `abs:%22perovskite+solar+cells%22+AND+cat:cond-mat.mtrl-sci` — a quoted
