@@ -67,9 +67,10 @@ Notes before you start:
 ## Step 2 — Build the wiki
 
 Create the wiki folder first if it doesn't exist. If it already holds a wiki — a `CLAUDE.md` or
-`AGENTS.md` with the four rules — this is a re-run: keep that rulebook. The category table and
-anything the user added to it are theirs; overwrite it only if the user explicitly asks for a
-reset, and otherwise touch it only where a later step says to.
+`AGENTS.md` with the four rules — this is a re-run, and the writes below are guarded one by one:
+the rulebook and `index.md` are kept, `scan_interests.py` is replaced. Follow those guards where
+they are written; where a step says "only if it does not exist", that beats the habit of
+building the folder from scratch.
 
 ### 2a. Original version
 
@@ -77,7 +78,8 @@ reset, and otherwise touch it only where a later step says to.
    `https://gist.github.com/joonan30/cbce305684d079dbe9a3fbaefe4e3959`
 2. Follow its own "Getting started" instructions: create the folder tree, write `AGENTS.md`
    from `AGENTS.md.template` filled in for the user's field and 5–10 categories (propose them,
-   let the user edit).
+   let the user edit). **Only if `AGENTS.md` does not already exist** — an existing one carries
+   the user's categories and their own added rules, and the template has neither.
 3. `CLAUDE.md` should mirror `AGENTS.md`. On macOS/Linux: `ln -s AGENTS.md CLAUDE.md`. On
    Windows symlinks usually fail without developer mode — instead write a `CLAUDE.md`
    containing only: *"Read `AGENTS.md` and follow it. That file is the single source of truth."*
@@ -109,13 +111,22 @@ reset, and otherwise touch it only where a later step says to.
    switch to the original version in Step 2a, which needs no Python.
 2. Fetch `templates/CLAUDE-custom.md`, fill in `[YOUR FIELD]`, the category table (5–10
    categories proposed from the field, user-approved), and `{PYTHON}`, and save it as
-   `{wiki}/CLAUDE.md`.
+   `{wiki}/CLAUDE.md` — **only if `{wiki}/CLAUDE.md` does not already exist.** On a re-run it
+   does, and it holds the categories the user has been filing under plus whatever rules they
+   added; the fresh template holds neither. Leave it and move on. (If they explicitly asked to
+   reset the rulebook, show them what is about to be lost first.)
 3. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
    `wiki/{each-category}/`, `wiki/overviews/`, `wiki/concepts/`, `wiki/seminars/`,
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
    `wiki/conversations/`, `wiki/other/`.
-4. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
-5. Create an empty `index.md` with the category headings.
+4. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`. This one
+   **does** get overwritten on a re-run — it is generated code with no user content, and picking
+   up its fixes is the whole point of re-running after a template update.
+5. Create an empty `index.md` with the category headings — **only if `index.md` does not already
+   exist.** It is the page catalog: every ingest adds a line to it, so on a re-run "create an
+   empty one" means deleting the table of contents for every paper in the wiki. If it exists but
+   is missing headings for newly added categories, append those headings rather than rewriting
+   the file.
 
 ## Step 3 — Briefing system (both versions)
 
@@ -288,8 +299,9 @@ reset, and otherwise touch it only where a later step says to.
      the docs reserve it for containers and VMs.
    - Reference: <https://code.claude.com/docs/en/desktop-scheduled-tasks#permissions-for-scheduled-tasks>.
 
-   Tell the user what the routine actually does: it scans the wiki folder, queries PubMed, and
-   writes `briefings/{date}.md`. The only thing it sends out is a PubMed search — plus the briefing
+   Tell the user what the routine actually does: it scans the wiki folder, queries the literature
+   API named in `briefing/PROMPT.md` (PubMed, or arXiv for fields PubMed does not cover), and
+   writes `briefings/{date}.md`. The only thing it sends out is that search — plus the briefing
    itself, if they chose email, Slack, or Notion. Wiki files are never uploaded anywhere.
 
 10. Tell the user plainly: the app must be open at briefing time, and the run can start a few
