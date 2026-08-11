@@ -112,7 +112,9 @@ lines you write about them are true. Five abstracts costs one request.
    Write the "what it is" line from the abstract, not the title. Titles overstate and omit; a
    one-line description guessed from a title is how a briefing ends up describing a paper that
    does not exist. If a finalist's abstract shows it is not what the title implied, drop it and
-   promote the next candidate.
+   promote the next candidate — and when there is no next candidate, because the pool held
+   exactly five, widen again as above rather than reporting four. Abstract rejections are the
+   normal way this loop ends, not an exception to it.
 
    Relevance still beats the count: if fewer than 5 clear the bar, report fewer and say why
    rather than filling the quota with padding.
