@@ -128,10 +128,12 @@ building the folder from scratch.
    set up on Windows says `py -3` inside a rulebook now being read on Ubuntu.
 
    **Test the launcher that is in the file; do not compare it to the probe.** Run it from the
-   wiki root and see whether it prints a version. If it does, it works here — keep it, whatever
-   it says, and use it as `{PYTHON}` for the rest of this setup. Only when it fails do you edit
-   those occurrences to the launcher the probe found. Same for `{wiki}/briefing/PROMPT.md` in
-   step 3.3.
+   wiki root and read what it prints, applying **the same 3.6-or-newer check as step 1** — a
+   recorded launcher can be the bare `python`, which on the new host may answer 2.7, and a
+   version printing successfully is not the same as a version that runs `scan_interests.py`.
+   Keep it when it passes that check, whatever its name, and use it as `{PYTHON}` for the rest
+   of this setup. Replace those occurrences with the probe's launcher when it fails to run *or*
+   fails the version check. Same for `{wiki}/briefing/PROMPT.md` in step 3.3.
 
    Matching against the probe would break the PEP 668 case in the rulebook's own ingest section.
    A wiki that hit `externally-managed-environment` deliberately records `.venv/bin/python`
@@ -371,10 +373,15 @@ Only relevant if the user writes Korean. Skip the whole step otherwise.
 
 ### 4a. Install
 
-**Skip the whole step if `~/.claude/skills/humanizer` already exists** (previous run, or the
-user installed it themselves). This is not just to save time: `cp -r` onto an existing folder
-does not fail or overwrite — it nests a second copy *inside*, leaving
-`humanizer/humanizer/` behind, silently.
+**Skip 4a — this sub-step only — if `~/.claude/skills/humanizer` already exists** (previous run,
+or the user installed it themselves), and go straight to 4b. This is not just to save time:
+`cp -r` onto an existing folder does not fail or overwrite — it nests a second copy *inside*,
+leaving `humanizer/humanizer/` behind, silently.
+
+**Do not skip 4b along with it.** Someone who installed the skill themselves has the one thing
+4b exists to fix — a skill that sits there and never fires unless it is asked for by name — and
+a previous run that stopped between 4a and 4b left the same gap. 4b has its own guard against
+adding a second copy of the block, so it is safe to reach every time.
 
 ```bash
 mkdir -p ~/.claude/skills
