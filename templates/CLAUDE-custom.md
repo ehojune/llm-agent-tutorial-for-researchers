@@ -102,6 +102,13 @@ pathlib.Path(sys.argv[2]).write_text(text[:12000], encoding='utf-8')
 " "/path/to/paper.pdf" extracted.txt
 ```
 
+If pip refuses with `externally-managed-environment` — Debian/Ubuntu since 23.04, Python from
+Homebrew — don't force it with `--break-system-packages`. Give the wiki its own environment
+once: run `{PYTHON} -m venv .venv` in the wiki root, then use `.venv/bin/python` (Windows:
+`.venv\Scripts\python`) wherever this file says `{PYTHON}`. `scan_interests.py` has no
+third-party dependencies, so either launcher runs it. On Debian/Ubuntu the venv module can
+itself be missing; the error message names the package to install (`python3-venv`).
+
 Write to a UTF-8 file rather than printing. On a non-UTF-8 console — Korean Windows defaults to
 cp949 — `print()` dies with `UnicodeEncodeError` on the first accented author name or Greek
 letter, and the extraction looks like a tooling failure rather than an encoding one.

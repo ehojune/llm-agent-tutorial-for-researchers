@@ -10,6 +10,9 @@ Notes before you start:
 
 - This setup itself needs web fetches (this repo's raw files, the upstream gist, PubMed later).
   The wiki's "no web search" rule applies to answering questions **after** setup, not to setup.
+- Setup gets re-run — a second machine, a template update, a straight replay. On a folder that
+  already holds a wiki the rule is **the user's data wins**: steps 2, 3.2, 3.4, 4a and 7 each say
+  what to keep. Nothing below is safe to blindly redo.
 - Template raw URLs used below:
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/CLAUDE-custom.md`
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/wiki-extras.md`
@@ -54,9 +57,20 @@ Notes before you start:
    from their field and let them edit. Good shapes: `Y-STR haplotype population`,
    `RNA splicing variant pathogenic`, `rare variant burden association disease`.
 
+   **First check that PubMed even covers the field.** PubMed is biomedicine and the life
+   sciences; question 1 names "materials science" as a perfectly good field, and a materials
+   scientist's PubMed briefing would be empty or noise every single morning. If the field lives
+   elsewhere (materials, ML, physics, astronomy…), say so plainly, and swap the briefing's
+   search to the arXiv API — the briefing prompt has a section for exactly this (apply it in
+   step 3.3), and the seed queries then follow its syntax instead.
+
 ## Step 2 — Build the wiki
 
-Create the wiki folder first if it doesn't exist.
+Create the wiki folder first if it doesn't exist. If it already holds a wiki — a `CLAUDE.md` or
+`AGENTS.md` with the four rules — this is a re-run, and the writes below are guarded one by one:
+the rulebook and `index.md` are kept, `scan_interests.py` is replaced. Follow those guards where
+they are written; where a step says "only if it does not exist", that beats the habit of
+building the folder from scratch.
 
 ### 2a. Original version
 
@@ -64,10 +78,18 @@ Create the wiki folder first if it doesn't exist.
    `https://gist.github.com/joonan30/cbce305684d079dbe9a3fbaefe4e3959`
 2. Follow its own "Getting started" instructions: create the folder tree, write `AGENTS.md`
    from `AGENTS.md.template` filled in for the user's field and 5–10 categories (propose them,
-   let the user edit).
+   let the user edit). **Only if `AGENTS.md` does not already exist** — an existing one carries
+   the user's categories and their own added rules, and the template has neither.
 3. `CLAUDE.md` should mirror `AGENTS.md`. On macOS/Linux: `ln -s AGENTS.md CLAUDE.md`. On
    Windows symlinks usually fail without developer mode — instead write a `CLAUDE.md`
    containing only: *"Read `AGENTS.md` and follow it. That file is the single source of truth."*
+
+   **Check whether `CLAUDE.md` exists before either.** On a re-run it does, and `ln -s` then
+   fails outright with `File exists`, stopping the flow this section promises. Do not reach for
+   `ln -sf`: it succeeds on a symlink but silently deletes a real `CLAUDE.md` — which is what
+   the Windows branch above creates, and where a user may have put their own notes. If the
+   existing file already points at `AGENTS.md` (symlink or pointer text), it is correct; leave
+   it. Only if it is missing, or is some third thing, ask before replacing it.
 4. Skip the BM25 retrieval-index setup for now and tell the user it becomes worthwhile past
    ~500 pages (the gist says the same).
 
@@ -96,13 +118,41 @@ Create the wiki folder first if it doesn't exist.
    switch to the original version in Step 2a, which needs no Python.
 2. Fetch `templates/CLAUDE-custom.md`, fill in `[YOUR FIELD]`, the category table (5–10
    categories proposed from the field, user-approved), and `{PYTHON}`, and save it as
-   `{wiki}/CLAUDE.md`.
+   `{wiki}/CLAUDE.md` — **only if `{wiki}/CLAUDE.md` does not already exist.** On a re-run it
+   does, and it holds the categories the user has been filing under plus whatever rules they
+   added; the fresh template holds neither. Leave it and move on. (If they explicitly asked to
+   reset the rulebook, show them what is about to be lost first.)
+
+   One thing in a kept rulebook can still be wrong: the launcher baked into it. A re-run from a
+   second machine — the case step 7 names — inherits the *first* machine's `{PYTHON}`, so a wiki
+   set up on Windows says `py -3` inside a rulebook now being read on Ubuntu.
+
+   **Test the launcher that is in the file; do not compare it to the probe.** Run it from the
+   wiki root and read what it prints, applying **the same 3.6-or-newer check as step 1** — a
+   recorded launcher can be the bare `python`, which on the new host may answer 2.7, and a
+   version printing successfully is not the same as a version that runs `scan_interests.py`.
+   Keep it when it passes that check, whatever its name, and use it as `{PYTHON}` for the rest
+   of this setup. Replace those occurrences with the probe's launcher when it fails to run *or*
+   fails the version check. Same for `{wiki}/briefing/PROMPT.md` in step 3.3.
+
+   Matching against the probe would break the PEP 668 case in the rulebook's own ingest section.
+   A wiki that hit `externally-managed-environment` deliberately records `.venv/bin/python`
+   (Windows: `.venv\Scripts\python`), which is *not* what a probe of `python3` / `python` /
+   `py -3` returns — same version number, different interpreter — so "differs from the probe"
+   would swap a working launcher that has `pypdf` for a system one that cannot install it, and
+   the next ingest fails the way the fallback exists to prevent.
 3. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
    `wiki/{each-category}/`, `wiki/overviews/`, `wiki/concepts/`, `wiki/seminars/`,
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
    `wiki/conversations/`, `wiki/other/`.
-4. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`.
-5. Create an empty `index.md` with the category headings.
+4. Fetch `templates/scan_interests.py` and save it as `{wiki}/scan_interests.py`. This one
+   **does** get overwritten on a re-run — it is generated code with no user content, and picking
+   up its fixes is the whole point of re-running after a template update.
+5. Create an empty `index.md` with the category headings — **only if `index.md` does not already
+   exist.** It is the page catalog: every ingest adds a line to it, so on a re-run "create an
+   empty one" means deleting the table of contents for every paper in the wiki. If it exists but
+   is missing headings for newly added categories, append those headings rather than rewriting
+   the file.
 
 ## Step 3 — Briefing system (both versions)
 
@@ -131,14 +181,40 @@ Create the wiki folder first if it doesn't exist.
    with the user's seed queries as the manual bullets, and `## Excluded topics` left empty. The
    manual queries are the backbone of the briefing — wiki tags only supplement them, and on a new
    wiki they are all there is. (Original version: the AUTO block stays empty, which is fine.)
+
+   **If this file already exists, leave it alone.** Its manual queries and excluded topics are the
+   user's, grown through use — rewriting it from the template deletes exactly the part that made
+   their briefing fit. Check the AUTO markers are present, append the marker block if missing, and
+   move on.
 3. Fetch `templates/briefing-prompt.md`, fill `{CHANNEL}` with the chosen channel and
    `{DESTINATION}` with the address/channel/database (`n/a` for desktop), and save it as
    `{wiki}/briefing/PROMPT.md`. Custom version: also fill `{PYTHON}` with the launcher found in
    Step 2b. Original version: there is no scanner, so delete that clause of step 1 instead.
+   Non-biomedical field (step 1.6): apply the prompt's "Fields PubMed does not cover" section
+   while saving — swap step 2's URLs for the arXiv call, with the field's `cat:` filter filled
+   in.
+
+   Like `scan_interests.py`, this file **is** overwritten on a re-run — it holds no user content
+   (the tuning lives in `interests.md`), and a refreshed prompt is the main thing a re-run
+   delivers. Carry over the `{CHANNEL}` / `{DESTINATION}` / arXiv choices already in the old
+   copy rather than asking again.
 4. Fetch `templates/wiki-extras.md`, fill `{BRIEFING_TIME}`, and **append it** to the rulebook
    (`CLAUDE.md` for custom, `AGENTS.md` for original). This adds three things: the automatic
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for
    missed briefings.
+
+   The block is delimited by `<!-- SETUP-EXTRAS START -->` and `<!-- SETUP-EXTRAS END -->`. On a
+   re-run, **replace what is between those markers with the freshly fetched version** — do not
+   append a second copy, and do not leave the old one sitting there. This block is generated,
+   so unlike the rest of the rulebook it is meant to be refreshed: a re-run that only edits the
+   time leaves an existing wiki on an old copy of these rules, which is precisely how a wiki
+   switched to arXiv ends up with a rulebook that still permits PubMed only, and a briefing that
+   then refuses its own search.
+
+   Wikis set up before this branch have the opening comment but no markers. There the block runs
+   from that comment to the end of the file — replace that span, but read what is there first
+   and carry over anything the user wrote themselves after it (their own rules, if any), placing
+   it below the new `SETUP-EXTRAS END`.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
 6. **Ask for the permissions the briefing needs, and ask now.** This settings file covers sessions
@@ -149,10 +225,15 @@ Create the wiki folder first if it doesn't exist.
 
    > 브리핑은 매일 아침 자리에 안 계실 때 도는 작업입니다. 그때 권한을 물어보면 아무도 답하지
    > 않아 그대로 멈추고, 파일도 알림도 남지 않습니다. **이 위키 폴더 안에서** 파일을 읽고 쓰고,
-   > PubMed를 검색하고, `scan_interests.py`를 돌릴 권한을 미리 열어둘까요? 이 폴더에서만
+   > 논문 검색을 하고, `scan_interests.py`를 돌릴 권한을 미리 열어둘까요? 이 폴더에서만
    > 적용되고, 다른 작업에는 영향이 없습니다.
 
-   On yes, write `{wiki}/.claude/settings.json`:
+   On yes, write `{wiki}/.claude/settings.json` — **or merge into it, if it already exists.**
+   Read it first and add only the missing `permissions.allow` entries, keeping every other key
+   as it is. That file is not necessarily yours: it may carry the user's own `deny` rules, hooks,
+   or connector permissions, and a re-run that replaces it wholesale deletes those — including
+   restrictions, which is the one direction a permissions file must never move by accident. If
+   the existing file already grants what the briefing needs, say so and write nothing.
 
    ```json
    {
@@ -263,8 +344,9 @@ Create the wiki folder first if it doesn't exist.
      the docs reserve it for containers and VMs.
    - Reference: <https://code.claude.com/docs/en/desktop-scheduled-tasks#permissions-for-scheduled-tasks>.
 
-   Tell the user what the routine actually does: it scans the wiki folder, queries PubMed, and
-   writes `briefings/{date}.md`. The only thing it sends out is a PubMed search — plus the briefing
+   Tell the user what the routine actually does: it scans the wiki folder, queries the literature
+   API named in `briefing/PROMPT.md` (PubMed, or arXiv for fields PubMed does not cover), and
+   writes `briefings/{date}.md`. The only thing it sends out is that search — plus the briefing
    itself, if they chose email, Slack, or Notion. Wiki files are never uploaded anywhere.
 
 10. Tell the user plainly: the app must be open at briefing time, and the run can start a few
@@ -291,8 +373,19 @@ Only relevant if the user writes Korean. Skip the whole step otherwise.
 
 ### 4a. Install
 
+**Skip 4a — this sub-step only — if `~/.claude/skills/humanizer` already exists** (previous run,
+or the user installed it themselves), and go straight to 4b. This is not just to save time:
+`cp -r` onto an existing folder does not fail or overwrite — it nests a second copy *inside*,
+leaving `humanizer/humanizer/` behind, silently.
+
+**Do not skip 4b along with it.** Someone who installed the skill themselves has the one thing
+4b exists to fix — a skill that sits there and never fires unless it is asked for by name — and
+a previous run that stopped between 4a and 4b left the same gap. 4b has its own guard against
+adding a second copy of the block, so it is safe to reach every time.
+
 ```bash
 mkdir -p ~/.claude/skills
+rm -rf /tmp/korean-skills
 git clone --depth 1 https://github.com/DaleSeo/korean-skills /tmp/korean-skills
 cp -r /tmp/korean-skills/skills/humanizer ~/.claude/skills/humanizer
 ```
@@ -301,6 +394,7 @@ Windows equivalent — `/tmp` does not exist, so clone somewhere real:
 
 ```bash
 mkdir -p "$USERPROFILE/.claude/skills"
+rm -rf "$TEMP/korean-skills"
 git clone --depth 1 https://github.com/DaleSeo/korean-skills "$TEMP/korean-skills"
 cp -r "$TEMP/korean-skills/skills/humanizer" "$USERPROFILE/.claude/skills/humanizer"
 ```
@@ -310,8 +404,11 @@ exists but `~/.claude/skills` does not, and `cp -r` will not create a missing pa
 with `cp: cannot create directory …: No such file or directory` and the step reads as a broken
 repository URL rather than a missing folder.
 
-No git? Fetch the files under `skills/humanizer/` from the GitHub API instead. Skip the install
-only if the folder already exists.
+**Do not drop the `rm -rf` either.** `/tmp` survives until reboot and `%TEMP%` effectively
+forever, so on any re-run the last clone is still sitting there and `git clone` dies with
+`fatal: destination path … already exists and is not an empty directory`.
+
+No git? Fetch the files under `skills/humanizer/` from the GitHub API instead.
 
 ### 4b. Ask whether it should apply automatically, and how widely
 

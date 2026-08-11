@@ -1,7 +1,10 @@
 
 ---
 
-<!-- Appended during setup from ehojune/llm-agent-tutorial-for-researchers. -->
+<!-- SETUP-EXTRAS START -->
+<!-- Appended during setup from ehojune/llm-agent-tutorial-for-researchers.
+     Everything between these two markers is generated — setup replaces the whole
+     block on a re-run, so put your own rules outside it. -->
 
 ## PDF Ingest Follow-up (automatic)
 
@@ -26,9 +29,11 @@ After **every** paper ingest, without being asked, follow up in the conversation
 verbatim). The "all wiki content is in English" policy covers `sources/` and `wiki/` — it does not
 reach `briefings/`, which the user reads rather than the retrieval system.
 
-**Web-access exception to rule #1.** The briefing task — and only it — may fetch PubMed
-E-utilities. Briefing output is *leads, not knowledge*: never cite `briefings/` as wiki
-evidence. Papers enter the wiki only through PDF ingest.
+**Web-access exception to rule #1.** The briefing task — and only it — may fetch the literature
+search API that `briefing/PROMPT.md` names: PubMed E-utilities, or the arXiv API for fields
+PubMed does not cover. Nothing else, and no other task. Briefing output is *leads, not
+knowledge*: never cite `briefings/` as wiki evidence. Papers enter the wiki only through PDF
+ingest.
 
 **Catch-up rule.** At the start of any session in this folder: if today's `briefings/` file does
 not exist and the current time is past {BRIEFING_TIME}, tell the user the briefing was missed
@@ -44,3 +49,5 @@ for it ("프로젝트 베이스 만들어줘", "이 프로젝트 GitHub/Notion�
 `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/project-base.md`
 
 (Fetching that one file is a permitted exception to rule #1, like the briefing.)
+
+<!-- SETUP-EXTRAS END -->

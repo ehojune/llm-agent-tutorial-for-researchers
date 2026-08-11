@@ -1,7 +1,8 @@
 # Daily Paper Briefing — task instructions
 
 Run from the wiki root. `{CHANNEL}` was set during setup. Web access is allowed for this task
-only (PubMed E-utilities); it never overrides the wiki's other rules.
+only (PubMed E-utilities — or the arXiv API, if setup applied "Fields PubMed does not cover"
+below); it never overrides the wiki's other rules.
 
 ## Keep every command approvable
 
@@ -104,8 +105,16 @@ lines you write about them are true. Five abstracts costs one request.
 
    Every paper needs five things: the **exact English title** (verbatim, never translated), the
    **journal and date**, the **PubMed link**, **what the paper does** (from the abstract you
-   fetched), and **why it was picked** — which interest matched, and the concrete tie: a wiki page
-   (`[[wikilink]]`), an active project, or a question the user asked.
+   fetched), and **why it was picked** — which interest matched, and the concrete tie: a wiki
+   page (`[[wikilink]]`), an active project, or a question the user asked.
+
+   On the arXiv path, two of those read differently: the link is the `abs` URL, and only the
+   **date** is required — a preprint has no journal until someone publishes it. Use the entry's
+   `journal_ref` when it is there; otherwise write *arXiv preprint* and the primary category,
+   e.g. *arXiv preprint · cond-mat.mtrl-sci · 2026-08-05*. Never call arXiv itself the journal,
+   and never drop a paper for lacking one — in a 7-day window almost none will have it
+   (measured: 0 of the 8 newest perovskite entries carry `journal_ref`, against 5 of the 10
+   oldest, which have had a decade to be published).
 
    **Write it as prose, not as a form.** Those five are what must be present, not a layout to
    reproduce. A briefing that renders them as labelled bullets — `- **저널·날짜** — …`,
@@ -168,6 +177,48 @@ lines you write about them are true. Five abstracts costs one request.
 
 6. Never ingest papers into the wiki from this task. Briefing is discovery only — the user
    downloads the PDF and asks for ingest.
+
+## Fields PubMed does not cover
+
+PubMed is biomedicine and the life sciences. When the wiki's field lives elsewhere (materials
+science, ML, astronomy, …), setup swaps step 2's URLs for the arXiv API, and the same
+discipline applies — screen on titles, read only the finalists' abstracts:
+
+```
+https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=30
+```
+
+- `{QUERY}` shape: `abs:%22perovskite+solar+cells%22+AND+cat:cond-mat.mtrl-sci` — a quoted
+  phrase against abstracts, `cat:` pinning the subject area. `[tiab]` and `reldate` are PubMed
+  syntax and mean nothing here.
+- Each Atom entry already carries title, abstract, dates, and link, so the esummary and efetch
+  calls fall away — one call per topic covers steps 2 and 3's fetches.
+- **There is no date window, so `max_results` is 30, not 4.** The filtering PubMed does with
+  `reldate` you do yourself: keep entries whose `published` is within 7 days (30 on the
+  zero-result retry), then take the newest 4 of those. Asking for 4 outright returns the newest
+  4 *ever* — for the perovskite query above, four entries reaching back two months, of which one
+  is actually recent.
+- **Ignore `totalResults`; the ~150 rule in step 2 does not apply here.** That count is
+  corpus-wide, not windowed, so it says 299 for the focused perovskite query — a topic with
+  exactly one new paper this week would be thrown out as "too broad". The arXiv equivalent of
+  that rule is: if **all 30** entries are still inside the **7-day** window, there are more than
+  30 papers a week on it, so it is a category and not a topic — skip it, and treat it like the
+  over-150 case. (Measured: `cat:cond-mat.mtrl-sci` alone returns 30 of 30 inside the window;
+  `abs:"perovskite solar cells" AND cat:cond-mat.mtrl-sci` returns 1.)
+
+  **Do not apply that cutoff to the 30-day retry.** 30 entries inside 30 days is about seven a
+  week, which is a healthy topic, not a category — and the retry only runs for topics that
+  returned *nothing* over 7 days, so it cannot be one anyway. arXiv makes this concrete:
+  submissions bunch around conference deadlines, so a quiet week followed by a heavy three
+  weeks is ordinary here. Throwing that topic away would discard exactly what the retry went
+  back to find.
+- Dedupe by arXiv id; link entries as `https://arxiv.org/abs/{id}`.
+- **Sleep ~3 s between calls, one at a time — not the 0.3 s above.** That figure is NCBI's;
+  arXiv's terms ask for "no more than one request every three seconds, and … a single
+  connection at a time". Ten times slower, but this path also makes one call per topic instead
+  of three, so a ten-topic briefing still runs in well under a minute.
+
+Everything else — five papers, prose body, the closing note — is unchanged.
 
 ## When the wiki is still thin
 
