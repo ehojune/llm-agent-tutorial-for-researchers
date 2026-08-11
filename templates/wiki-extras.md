@@ -1,7 +1,10 @@
 
 ---
 
-<!-- Appended during setup from ehojune/llm-agent-tutorial-for-researchers. -->
+<!-- SETUP-EXTRAS START -->
+<!-- Appended during setup from ehojune/llm-agent-tutorial-for-researchers.
+     Everything between these two markers is generated — setup replaces the whole
+     block on a re-run, so put your own rules outside it. -->
 
 ## PDF Ingest Follow-up (automatic)
 
@@ -46,3 +49,5 @@ for it ("프로젝트 베이스 만들어줘", "이 프로젝트 GitHub/Notion�
 `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/project-base.md`
 
 (Fetching that one file is a permitted exception to rule #1, like the briefing.)
+
+<!-- SETUP-EXTRAS END -->

@@ -183,9 +183,18 @@ building the folder from scratch.
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for
    missed briefings.
 
-   The file begins with the marker `<!-- Appended during setup … -->`. If the rulebook already
-   contains that marker, a previous run appended it — do not append a second copy. Just fix the
-   `{BRIEFING_TIME}` lines in place if the time changed.
+   The block is delimited by `<!-- SETUP-EXTRAS START -->` and `<!-- SETUP-EXTRAS END -->`. On a
+   re-run, **replace what is between those markers with the freshly fetched version** — do not
+   append a second copy, and do not leave the old one sitting there. This block is generated,
+   so unlike the rest of the rulebook it is meant to be refreshed: a re-run that only edits the
+   time leaves an existing wiki on an old copy of these rules, which is precisely how a wiki
+   switched to arXiv ends up with a rulebook that still permits PubMed only, and a briefing that
+   then refuses its own search.
+
+   Wikis set up before this branch have the opening comment but no markers. There the block runs
+   from that comment to the end of the file — replace that span, but read what is there first
+   and carry over anything the user wrote themselves after it (their own rules, if any), placing
+   it below the new `SETUP-EXTRAS END`.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
 6. **Ask for the permissions the briefing needs, and ask now.** This settings file covers sessions
@@ -196,10 +205,15 @@ building the folder from scratch.
 
    > 브리핑은 매일 아침 자리에 안 계실 때 도는 작업입니다. 그때 권한을 물어보면 아무도 답하지
    > 않아 그대로 멈추고, 파일도 알림도 남지 않습니다. **이 위키 폴더 안에서** 파일을 읽고 쓰고,
-   > PubMed를 검색하고, `scan_interests.py`를 돌릴 권한을 미리 열어둘까요? 이 폴더에서만
+   > 논문 검색을 하고, `scan_interests.py`를 돌릴 권한을 미리 열어둘까요? 이 폴더에서만
    > 적용되고, 다른 작업에는 영향이 없습니다.
 
-   On yes, write `{wiki}/.claude/settings.json`:
+   On yes, write `{wiki}/.claude/settings.json` — **or merge into it, if it already exists.**
+   Read it first and add only the missing `permissions.allow` entries, keeping every other key
+   as it is. That file is not necessarily yours: it may carry the user's own `deny` rules, hooks,
+   or connector permissions, and a re-run that replaces it wholesale deletes those — including
+   restrictions, which is the one direction a permissions file must never move by accident. If
+   the existing file already grants what the briefing needs, say so and write nothing.
 
    ```json
    {
