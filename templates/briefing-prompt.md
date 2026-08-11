@@ -188,9 +188,18 @@ discipline applies — screen on titles, read only the finalists' abstracts:
 https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=30
 ```
 
-- `{QUERY}` shape: `abs:%22perovskite+solar+cells%22+AND+cat:cond-mat.mtrl-sci` — a quoted
-  phrase against abstracts, `cat:` pinning the subject area. `[tiab]` and `reldate` are PubMed
-  syntax and mean nothing here.
+- `{QUERY}` shape: **one `abs:` term per word, joined with `AND`**, plus `cat:` pinning the
+  subject area. `perovskite solar cells` becomes
+  `abs:perovskite+AND+abs:solar+AND+abs:cells+AND+cat:cond-mat.mtrl-sci`. `[tiab]` and
+  `reldate` are PubMed syntax and mean nothing here; `abs:` is what restricts a term to the
+  abstract, so it is the direct equivalent of tagging each term `[tiab]`.
+
+  **Do not quote the whole topic** (`abs:"solid state electrolyte interface"`) — same trap as
+  on the PubMed side, and it bites harder here. A quoted phrase demands that exact wording in
+  that exact order, so a topic phrased slightly differently than authors phrase it returns
+  nothing *at all* — not a thin week, an empty corpus. Measured over four materials-science
+  seed queries: quoted, two of the four returned 0 results ever; per-term, the same two return
+  30 and have a paper inside 30 days. The other two were unchanged or slightly better.
 - Each Atom entry already carries title, abstract, dates, and link, so the esummary and efetch
   calls fall away — one call per topic covers steps 2 and 3's fetches.
 - **There is no date window, so `max_results` is 30, not 4.** The filtering PubMed does with
@@ -204,7 +213,7 @@ https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sor
   that rule is: if **all 30** entries are still inside the **7-day** window, there are more than
   30 papers a week on it, so it is a category and not a topic — skip it, and treat it like the
   over-150 case. (Measured: `cat:cond-mat.mtrl-sci` alone returns 30 of 30 inside the window;
-  `abs:"perovskite solar cells" AND cat:cond-mat.mtrl-sci` returns 1.)
+  the same category with `perovskite`, `solar` and `cells` AND-ed on returns 1.)
 
   **Do not apply that cutoff to the 30-day retry.** 30 entries inside 30 days is about seven a
   week, which is a healthy topic, not a category — and the retry only runs for topics that
