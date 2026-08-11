@@ -10,6 +10,8 @@ PR로 들어온 변경은 스쿼시 머지라 개별 커밋이 main에 남지 �
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
+| 16:12 | [`3c2be4f`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/3c2be4f) | **arXiv 경로가 NCBI 페이싱을 물려받던 문제** (Codex 리뷰). 새 섹션을 "나머지는 그대로"로 닫았더니 `0.3초 대기` 한 줄까지 딸려갔는데, arXiv 이용약관은 3초에 한 번, 연결도 하나만 쓰라고 합니다 — 딱 10배 빠릅니다. 걸려도 간헐적이라 사용자에겐 rate limit이 아니라 불안정한 브리핑으로 보입니다. 주제당 호출이 1번(PubMed는 3번)이라 10개 주제 기준 대기는 30초 남짓입니다 |
+| 15:44 | [`b2fc73a`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/b2fc73a) | arXiv 엔드포인트를 https로. 평문 URL을 문서에 둘 이유가 없습니다 |
 | 15:21 | [`d0eeff0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/d0eeff0) | **`pip install pypdf`가 PEP 668로 거부되는 환경(Ubuntu 23.04+, Homebrew Python) 대비.** 첫 논문을 넣는 순간 `externally-managed-environment`로 막히는데, 세팅은 이미 성공으로 끝난 뒤라 제일 당황스러운 지점입니다. `--break-system-packages` 대신 위키 루트에 `.venv`를 한 번 만들어 그 python을 쓰라는 폴백을 규칙집에 넣었습니다 |
 | 15:20 | [`848f3e7`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/848f3e7) | **PubMed가 못 덮는 분야에 arXiv 스왑.** SETUP이 예시로 든 "materials science"로 세팅하면 매일 아침 빈 브리핑이 나옵니다 — PubMed는 생명과학·의학 문헌이니까요. 이제 세팅 중에 분야를 확인하고, 바깥 분야면 브리핑 검색을 arXiv API로 바꿔 잡습니다. 호출 한 번에 제목·초록·날짜·링크가 다 와서 esummary/efetch 단계가 통째로 빠지는 것까지 실제로 확인했습니다 |
 | 15:18 | [`4321354`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/4321354) | **세팅을 다시 돌리면 사용자 데이터가 지워지던 문제.** 두 번째 컴퓨터나 템플릿 업데이트로 재실행하면 interests.md가 템플릿으로 되돌아가 키워온 검색어·제외 목록이 날아가고, 규칙집에는 wiki-extras가 한 벌 더 붙고, humanizer 설치는 남아 있는 임시 클론에 `git clone`이 fatal로 죽거나 기존 폴더 안에 `humanizer/humanizer/`로 중첩 복사됐습니다(둘 다 재현). 이제 "사용자 데이터가 이긴다"는 원칙으로 단계마다 가드를 달았습니다 |
