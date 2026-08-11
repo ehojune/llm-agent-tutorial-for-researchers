@@ -187,6 +187,10 @@ https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sor
 - There is no date-window parameter: the feed is newest-first, so drop entries whose
   `published` is older than 7 days yourself (30 on the zero-result retry).
 - Dedupe by arXiv id; link entries as `https://arxiv.org/abs/{id}`.
+- **Sleep ~3 s between calls, one at a time — not the 0.3 s above.** That figure is NCBI's;
+  arXiv's terms ask for "no more than one request every three seconds, and … a single
+  connection at a time". Ten times slower, but this path also makes one call per topic instead
+  of three, so a ten-topic briefing still runs in well under a minute.
 
 Everything else — five papers, prose body, the closing note — is unchanged.
 
