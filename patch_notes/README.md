@@ -10,6 +10,7 @@ PR로 들어온 변경은 스쿼시 머지라 개별 커밋이 main에 남지 �
 
 | 시간 | 커밋 | 주요 변경사항 |
 |---|---|---|
+| 03:43 | [`772f507`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/772f507) | **초록에서 논문이 탈락하면 보충이 안 되던 문제** (Codex 리뷰). 보충 루프는 제목 스크리닝 통과 5편에서 멈추고 초록은 그 뒤에 읽으니, 후보가 정확히 5편이면 "다음 후보로 교체"할 대상이 없습니다. 초록 탈락 시 같은 조건으로 다시 넓히도록 이었습니다 |
 | 03:39 | [`5166485`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/5166485) | **보충 규칙에서 고정 숫자를 완전히 뺐습니다** (Codex 리뷰). 한쪽 경로의 고정값을 조건으로 바꾸면서 다른 쪽에 또 고정값을 남기는 걸 세 번 반복했습니다 — `retmax=8` 다음이 `&start=30`(딱 한 페이지 더)이었죠. 이제 양쪽 다 "5편이 차거나 창·`count`가 소진될 때까지"이고, 어느 경로에도 상한이 없다고 명시했습니다 |
 | 03:35 | [`afd663f`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/afd663f) | **arXiv 쪽 30건 상한** (Codex 리뷰). 앞 커밋이 PubMed의 고정값을 조건으로 바꿔놓고 바로 옆에서는 arXiv에 "재조회 불필요"라고 적어 30건 상한을 못박고 있었습니다. 30일 재시도에서 실제로 닿습니다 — 한 시드 쿼리가 `start=0`에서 30건 전부 창 안, `start=30`에서 15건 더, 즉 30건짜리 조회 뒤에 45편이 있었습니다. 모자라면 `&start=30`으로 이어갑니다 |
 | 03:31 | [`b7417f6`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/6/commits/b7417f6) | **보충 조회를 고정 `retmax=8`로 하던 문제** (Codex 리뷰). 최신 8건 중 4건 이상이 중복 제거·erratum 제외·제목 스크리닝에서 떨어지면 여전히 모자랍니다. 고정 숫자는 무엇을 넣든 같은 구멍이 남으니 숫자 대신 조건으로 바꿨습니다 — 5편이 차거나 `count`가 소진될 때까지 |
