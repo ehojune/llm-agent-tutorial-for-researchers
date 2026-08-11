@@ -169,6 +169,27 @@ lines you write about them are true. Five abstracts costs one request.
 6. Never ingest papers into the wiki from this task. Briefing is discovery only — the user
    downloads the PDF and asks for ingest.
 
+## Fields PubMed does not cover
+
+PubMed is biomedicine and the life sciences. When the wiki's field lives elsewhere (materials
+science, ML, astronomy, …), setup swaps step 2's URLs for the arXiv API, and the same
+discipline applies — screen on titles, read only the finalists' abstracts:
+
+```
+http://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sortOrder=descending&max_results=4
+```
+
+- `{QUERY}` shape: `abs:%22perovskite+solar+cells%22+AND+cat:cond-mat.mtrl-sci` — a quoted
+  phrase against abstracts, `cat:` pinning the subject area. `[tiab]` and `reldate` are PubMed
+  syntax and mean nothing here.
+- Each Atom entry already carries title, abstract, dates, and link, so the esummary and efetch
+  calls fall away — one call per topic covers steps 2 and 3's fetches.
+- There is no date-window parameter: the feed is newest-first, so drop entries whose
+  `published` is older than 7 days yourself (30 on the zero-result retry).
+- Dedupe by arXiv id; link entries as `https://arxiv.org/abs/{id}`.
+
+Everything else — five papers, prose body, the closing note — is unchanged.
+
 ## When the wiki is still thin
 
 Below roughly 10 tagged pages the AUTO block is not yet a real signal: few tags, all tied in

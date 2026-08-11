@@ -57,6 +57,13 @@ Notes before you start:
    from their field and let them edit. Good shapes: `Y-STR haplotype population`,
    `RNA splicing variant pathogenic`, `rare variant burden association disease`.
 
+   **First check that PubMed even covers the field.** PubMed is biomedicine and the life
+   sciences; question 1 names "materials science" as a perfectly good field, and a materials
+   scientist's PubMed briefing would be empty or noise every single morning. If the field lives
+   elsewhere (materials, ML, physics, astronomy…), say so plainly, and swap the briefing's
+   search to the arXiv API — the briefing prompt has a section for exactly this (apply it in
+   step 3.3), and the seed queries then follow its syntax instead.
+
 ## Step 2 — Build the wiki
 
 Create the wiki folder first if it doesn't exist. If it already holds a wiki — a `CLAUDE.md` or
@@ -146,6 +153,9 @@ reset, and otherwise touch it only where a later step says to.
    `{DESTINATION}` with the address/channel/database (`n/a` for desktop), and save it as
    `{wiki}/briefing/PROMPT.md`. Custom version: also fill `{PYTHON}` with the launcher found in
    Step 2b. Original version: there is no scanner, so delete that clause of step 1 instead.
+   Non-biomedical field (step 1.6): apply the prompt's "Fields PubMed does not cover" section
+   while saving — swap step 2's URLs for the arXiv call, with the field's `cat:` filter filled
+   in.
 4. Fetch `templates/wiki-extras.md`, fill `{BRIEFING_TIME}`, and **append it** to the rulebook
    (`CLAUDE.md` for custom, `AGENTS.md` for original). This adds three things: the automatic
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for
