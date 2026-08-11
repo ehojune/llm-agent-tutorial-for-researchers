@@ -104,10 +104,17 @@ lines you write about them are true. Five abstracts costs one request.
    fewer than 5 relevant papers exist — then say so in one line and do not pad.
 
    Every paper needs five things: the **exact English title** (verbatim, never translated), the
-   **journal and date**, the **PubMed link** (the arXiv abs link on the arXiv path), **what the
-   paper does** (from the abstract you fetched), and **why it was picked** — which interest
-   matched, and the concrete tie: a wiki page (`[[wikilink]]`), an active project, or a question
-   the user asked.
+   **journal and date**, the **PubMed link**, **what the paper does** (from the abstract you
+   fetched), and **why it was picked** — which interest matched, and the concrete tie: a wiki
+   page (`[[wikilink]]`), an active project, or a question the user asked.
+
+   On the arXiv path, two of those read differently: the link is the `abs` URL, and only the
+   **date** is required — a preprint has no journal until someone publishes it. Use the entry's
+   `journal_ref` when it is there; otherwise write *arXiv preprint* and the primary category,
+   e.g. *arXiv preprint · cond-mat.mtrl-sci · 2026-08-05*. Never call arXiv itself the journal,
+   and never drop a paper for lacking one — in a 7-day window almost none will have it
+   (measured: 0 of the 8 newest perovskite entries carry `journal_ref`, against 5 of the 10
+   oldest, which have had a decade to be published).
 
    **Write it as prose, not as a form.** Those five are what must be present, not a layout to
    reproduce. A briefing that renders them as labelled bullets — `- **저널·날짜** — …`,

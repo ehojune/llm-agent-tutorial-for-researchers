@@ -83,6 +83,13 @@ building the folder from scratch.
 3. `CLAUDE.md` should mirror `AGENTS.md`. On macOS/Linux: `ln -s AGENTS.md CLAUDE.md`. On
    Windows symlinks usually fail without developer mode — instead write a `CLAUDE.md`
    containing only: *"Read `AGENTS.md` and follow it. That file is the single source of truth."*
+
+   **Check whether `CLAUDE.md` exists before either.** On a re-run it does, and `ln -s` then
+   fails outright with `File exists`, stopping the flow this section promises. Do not reach for
+   `ln -sf`: it succeeds on a symlink but silently deletes a real `CLAUDE.md` — which is what
+   the Windows branch above creates, and where a user may have put their own notes. If the
+   existing file already points at `AGENTS.md` (symlink or pointer text), it is correct; leave
+   it. Only if it is missing, or is some third thing, ask before replacing it.
 4. Skip the BM25 retrieval-index setup for now and tell the user it becomes worthwhile past
    ~500 pages (the gist says the same).
 
