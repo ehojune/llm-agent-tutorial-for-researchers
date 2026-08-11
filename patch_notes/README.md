@@ -6,6 +6,15 @@
 PR로 들어온 변경은 스쿼시 머지라 개별 커밋이 main에 남지 않기 때문에, 해시는 그 PR 안의
 커밋으로 연결됩니다.
 
+## 2026-08-11
+
+| 시간 | 커밋 | 주요 변경사항 |
+|---|---|---|
+| 15:21 | [`d0eeff0`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/d0eeff0) | **`pip install pypdf`가 PEP 668로 거부되는 환경(Ubuntu 23.04+, Homebrew Python) 대비.** 첫 논문을 넣는 순간 `externally-managed-environment`로 막히는데, 세팅은 이미 성공으로 끝난 뒤라 제일 당황스러운 지점입니다. `--break-system-packages` 대신 위키 루트에 `.venv`를 한 번 만들어 그 python을 쓰라는 폴백을 규칙집에 넣었습니다 |
+| 15:20 | [`848f3e7`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/848f3e7) | **PubMed가 못 덮는 분야에 arXiv 스왑.** SETUP이 예시로 든 "materials science"로 세팅하면 매일 아침 빈 브리핑이 나옵니다 — PubMed는 생명과학·의학 문헌이니까요. 이제 세팅 중에 분야를 확인하고, 바깥 분야면 브리핑 검색을 arXiv API로 바꿔 잡습니다. 호출 한 번에 제목·초록·날짜·링크가 다 와서 esummary/efetch 단계가 통째로 빠지는 것까지 실제로 확인했습니다 |
+| 15:18 | [`4321354`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/4321354) | **세팅을 다시 돌리면 사용자 데이터가 지워지던 문제.** 두 번째 컴퓨터나 템플릿 업데이트로 재실행하면 interests.md가 템플릿으로 되돌아가 키워온 검색어·제외 목록이 날아가고, 규칙집에는 wiki-extras가 한 벌 더 붙고, humanizer 설치는 남아 있는 임시 클론에 `git clone`이 fatal로 죽거나 기존 폴더 안에 `humanizer/humanizer/`로 중첩 복사됐습니다(둘 다 재현). 이제 "사용자 데이터가 이긴다"는 원칙으로 단계마다 가드를 달았습니다 |
+| 15:14 | [`e4566b8`](https://github.com/ehojune/llm-agent-tutorial-for-researchers/pull/5/commits/e4566b8) | **"그건 추천하지 마"가 진짜로 영구 반영되게.** 제외한 주제도 태그가 위키에서 계속 높게 랭크되면 스캔 때마다 AUTO 블록에 되살아나 10칸 중 한 칸을 차지했습니다 — 브리핑이 검색 직전에 걸러주긴 하지만 그만큼 실제 검색 폭이 조용히 줄어듭니다. 이제 스캐너가 `## Excluded topics`를 읽고 그 주제를 건너뛰고 다음 순위로 채웁니다. 쓰던 위키는 [`templates/scan_interests.py`](../templates/scan_interests.py)를 새로 받아 덮어쓰면 됩니다 |
+
 ## 2026-08-10
 
 | 시간 | 커밋 | 주요 변경사항 |
