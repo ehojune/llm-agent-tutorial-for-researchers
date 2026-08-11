@@ -201,10 +201,17 @@ https://export.arxiv.org/api/query?search_query={QUERY}&sortBy=submittedDate&sor
 - **Ignore `totalResults`; the ~150 rule in step 2 does not apply here.** That count is
   corpus-wide, not windowed, so it says 299 for the focused perovskite query — a topic with
   exactly one new paper this week would be thrown out as "too broad". The arXiv equivalent of
-  that rule is: if **all 30** entries are still inside the window, there are more than 30 papers
-  a week on it, so it is a category and not a topic — skip it, and treat it like the over-150
-  case. (Measured: `cat:cond-mat.mtrl-sci` alone returns 30 of 30 inside the window;
+  that rule is: if **all 30** entries are still inside the **7-day** window, there are more than
+  30 papers a week on it, so it is a category and not a topic — skip it, and treat it like the
+  over-150 case. (Measured: `cat:cond-mat.mtrl-sci` alone returns 30 of 30 inside the window;
   `abs:"perovskite solar cells" AND cat:cond-mat.mtrl-sci` returns 1.)
+
+  **Do not apply that cutoff to the 30-day retry.** 30 entries inside 30 days is about seven a
+  week, which is a healthy topic, not a category — and the retry only runs for topics that
+  returned *nothing* over 7 days, so it cannot be one anyway. arXiv makes this concrete:
+  submissions bunch around conference deadlines, so a quiet week followed by a heavy three
+  weeks is ordinary here. Throwing that topic away would discard exactly what the retry went
+  back to find.
 - Dedupe by arXiv id; link entries as `https://arxiv.org/abs/{id}`.
 - **Sleep ~3 s between calls, one at a time — not the 0.3 s above.** That figure is NCBI's;
   arXiv's terms ask for "no more than one request every three seconds, and … a single
