@@ -115,6 +115,12 @@ building the folder from scratch.
    does, and it holds the categories the user has been filing under plus whatever rules they
    added; the fresh template holds neither. Leave it and move on. (If they explicitly asked to
    reset the rulebook, show them what is about to be lost first.)
+
+   One thing in a kept rulebook can still be wrong: the launcher baked into it. A re-run from a
+   second machine — the case step 7 names — inherits the *first* machine's `{PYTHON}`, so a wiki
+   set up on Windows says `py -3` inside a rulebook now being read on Ubuntu. If the launcher in
+   the file is not the one the probe just found, edit those occurrences to `{PYTHON}` and leave
+   the rest of the file alone. Same for `{wiki}/briefing/PROMPT.md` in step 3.3.
 3. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
    `wiki/{each-category}/`, `wiki/overviews/`, `wiki/concepts/`, `wiki/seminars/`,
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
@@ -167,6 +173,11 @@ building the folder from scratch.
    Non-biomedical field (step 1.6): apply the prompt's "Fields PubMed does not cover" section
    while saving — swap step 2's URLs for the arXiv call, with the field's `cat:` filter filled
    in.
+
+   Like `scan_interests.py`, this file **is** overwritten on a re-run — it holds no user content
+   (the tuning lives in `interests.md`), and a refreshed prompt is the main thing a re-run
+   delivers. Carry over the `{CHANNEL}` / `{DESTINATION}` / arXiv choices already in the old
+   copy rather than asking again.
 4. Fetch `templates/wiki-extras.md`, fill `{BRIEFING_TIME}`, and **append it** to the rulebook
    (`CLAUDE.md` for custom, `AGENTS.md` for original). This adds three things: the automatic
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for
