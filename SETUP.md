@@ -10,6 +10,9 @@ Notes before you start:
 
 - This setup itself needs web fetches (this repo's raw files, the upstream gist, PubMed later).
   The wiki's "no web search" rule applies to answering questions **after** setup, not to setup.
+- Setup gets re-run — a second machine, a template update, a straight replay. On a folder that
+  already holds a wiki the rule is **the user's data wins**: steps 2, 3.2, 3.4, 4a and 7 each say
+  what to keep. Nothing below is safe to blindly redo.
 - Template raw URLs used below:
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/CLAUDE-custom.md`
   - `https://raw.githubusercontent.com/ehojune/llm-agent-tutorial-for-researchers/main/templates/wiki-extras.md`
@@ -56,7 +59,10 @@ Notes before you start:
 
 ## Step 2 — Build the wiki
 
-Create the wiki folder first if it doesn't exist.
+Create the wiki folder first if it doesn't exist. If it already holds a wiki — a `CLAUDE.md` or
+`AGENTS.md` with the four rules — this is a re-run: keep that rulebook. The category table and
+anything the user added to it are theirs; overwrite it only if the user explicitly asks for a
+reset, and otherwise touch it only where a later step says to.
 
 ### 2a. Original version
 
@@ -131,6 +137,11 @@ Create the wiki folder first if it doesn't exist.
    with the user's seed queries as the manual bullets, and `## Excluded topics` left empty. The
    manual queries are the backbone of the briefing — wiki tags only supplement them, and on a new
    wiki they are all there is. (Original version: the AUTO block stays empty, which is fine.)
+
+   **If this file already exists, leave it alone.** Its manual queries and excluded topics are the
+   user's, grown through use — rewriting it from the template deletes exactly the part that made
+   their briefing fit. Check the AUTO markers are present, append the marker block if missing, and
+   move on.
 3. Fetch `templates/briefing-prompt.md`, fill `{CHANNEL}` with the chosen channel and
    `{DESTINATION}` with the address/channel/database (`n/a` for desktop), and save it as
    `{wiki}/briefing/PROMPT.md`. Custom version: also fill `{PYTHON}` with the launcher found in
@@ -139,6 +150,10 @@ Create the wiki folder first if it doesn't exist.
    (`CLAUDE.md` for custom, `AGENTS.md` for original). This adds three things: the automatic
    ingest follow-up report, the briefing web-access exception, and the catch-up rule for
    missed briefings.
+
+   The file begins with the marker `<!-- Appended during setup … -->`. If the rulebook already
+   contains that marker, a previous run appended it — do not append a second copy. Just fix the
+   `{BRIEFING_TIME}` lines in place if the time changed.
 5. If the channel needs a connector (email/Slack/Notion), walk the user through connecting it
    now, and record the destination (address / channel / database) inside `briefing/PROMPT.md`.
 6. **Ask for the permissions the briefing needs, and ask now.** This settings file covers sessions
@@ -291,8 +306,14 @@ Only relevant if the user writes Korean. Skip the whole step otherwise.
 
 ### 4a. Install
 
+**Skip the whole step if `~/.claude/skills/humanizer` already exists** (previous run, or the
+user installed it themselves). This is not just to save time: `cp -r` onto an existing folder
+does not fail or overwrite — it nests a second copy *inside*, leaving
+`humanizer/humanizer/` behind, silently.
+
 ```bash
 mkdir -p ~/.claude/skills
+rm -rf /tmp/korean-skills
 git clone --depth 1 https://github.com/DaleSeo/korean-skills /tmp/korean-skills
 cp -r /tmp/korean-skills/skills/humanizer ~/.claude/skills/humanizer
 ```
@@ -301,6 +322,7 @@ Windows equivalent — `/tmp` does not exist, so clone somewhere real:
 
 ```bash
 mkdir -p "$USERPROFILE/.claude/skills"
+rm -rf "$TEMP/korean-skills"
 git clone --depth 1 https://github.com/DaleSeo/korean-skills "$TEMP/korean-skills"
 cp -r "$TEMP/korean-skills/skills/humanizer" "$USERPROFILE/.claude/skills/humanizer"
 ```
@@ -310,8 +332,11 @@ exists but `~/.claude/skills` does not, and `cp -r` will not create a missing pa
 with `cp: cannot create directory …: No such file or directory` and the step reads as a broken
 repository URL rather than a missing folder.
 
-No git? Fetch the files under `skills/humanizer/` from the GitHub API instead. Skip the install
-only if the folder already exists.
+**Do not drop the `rm -rf` either.** `/tmp` survives until reboot and `%TEMP%` effectively
+forever, so on any re-run the last clone is still sitting there and `git clone` dies with
+`fatal: destination path … already exists and is not an empty directory`.
+
+No git? Fetch the files under `skills/humanizer/` from the GitHub API instead.
 
 ### 4b. Ask whether it should apply automatically, and how widely
 
