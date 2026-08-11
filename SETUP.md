@@ -125,9 +125,20 @@ building the folder from scratch.
 
    One thing in a kept rulebook can still be wrong: the launcher baked into it. A re-run from a
    second machine — the case step 7 names — inherits the *first* machine's `{PYTHON}`, so a wiki
-   set up on Windows says `py -3` inside a rulebook now being read on Ubuntu. If the launcher in
-   the file is not the one the probe just found, edit those occurrences to `{PYTHON}` and leave
-   the rest of the file alone. Same for `{wiki}/briefing/PROMPT.md` in step 3.3.
+   set up on Windows says `py -3` inside a rulebook now being read on Ubuntu.
+
+   **Test the launcher that is in the file; do not compare it to the probe.** Run it from the
+   wiki root and see whether it prints a version. If it does, it works here — keep it, whatever
+   it says, and use it as `{PYTHON}` for the rest of this setup. Only when it fails do you edit
+   those occurrences to the launcher the probe found. Same for `{wiki}/briefing/PROMPT.md` in
+   step 3.3.
+
+   Matching against the probe would break the PEP 668 case in the rulebook's own ingest section.
+   A wiki that hit `externally-managed-environment` deliberately records `.venv/bin/python`
+   (Windows: `.venv\Scripts\python`), which is *not* what a probe of `python3` / `python` /
+   `py -3` returns — same version number, different interpreter — so "differs from the probe"
+   would swap a working launcher that has `pypdf` for a system one that cannot install it, and
+   the next ingest fails the way the fallback exists to prevent.
 3. Create the folders: `papers/`, `papers/textbooks/`, `sources/`,
    `wiki/{each-category}/`, `wiki/overviews/`, `wiki/concepts/`, `wiki/seminars/`,
    `wiki/notes/`, `wiki/project-meetings/`, `wiki/routine-meetings/`, `wiki/textbook-study/`,
