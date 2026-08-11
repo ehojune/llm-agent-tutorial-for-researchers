@@ -1,7 +1,8 @@
 # Daily Paper Briefing — task instructions
 
 Run from the wiki root. `{CHANNEL}` was set during setup. Web access is allowed for this task
-only (PubMed E-utilities); it never overrides the wiki's other rules.
+only (PubMed E-utilities — or the arXiv API, if setup applied "Fields PubMed does not cover"
+below); it never overrides the wiki's other rules.
 
 ## Keep every command approvable
 
@@ -103,9 +104,10 @@ lines you write about them are true. Five abstracts costs one request.
    fewer than 5 relevant papers exist — then say so in one line and do not pad.
 
    Every paper needs five things: the **exact English title** (verbatim, never translated), the
-   **journal and date**, the **PubMed link**, **what the paper does** (from the abstract you
-   fetched), and **why it was picked** — which interest matched, and the concrete tie: a wiki page
-   (`[[wikilink]]`), an active project, or a question the user asked.
+   **journal and date**, the **PubMed link** (the arXiv abs link on the arXiv path), **what the
+   paper does** (from the abstract you fetched), and **why it was picked** — which interest
+   matched, and the concrete tie: a wiki page (`[[wikilink]]`), an active project, or a question
+   the user asked.
 
    **Write it as prose, not as a form.** Those five are what must be present, not a layout to
    reproduce. A briefing that renders them as labelled bullets — `- **저널·날짜** — …`,
