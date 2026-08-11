@@ -10,8 +10,8 @@ papers. Scores decay with age so recent interests dominate.
 Outputs:
   - interests.json          (machine-readable ranked topics)
   - interests.md            (human-readable ranked list)
-  - refreshes the AUTO block in briefing/interests.md (manual lines kept),
-    which the daily paper briefing reads.
+  - refreshes the AUTO block in briefing/interests.md (manual lines kept,
+    excluded topics left out), which the daily paper briefing reads.
 
 No third-party deps (no PyYAML required). Run:  python scan_interests.py
 """
@@ -259,11 +259,57 @@ def write_md(ranked, files):
     (WIKI_ROOT / "interests.md").write_text("\n".join(lines), encoding="utf-8")
 
 
+def parse_excluded(text):
+    """Bullets under `## Excluded topics`, normalised to query form.
+
+    The AUTO block lives inside that same section, so it is stripped first —
+    otherwise every topic the last run generated would read as excluded and
+    the block would empty itself on the next run.
+    """
+    manual = re.sub(
+        re.escape(AUTO_START) + r".*?" + re.escape(AUTO_END), "", text, flags=re.DOTALL
+    )
+    excluded = set()
+    in_section = False
+    for line in manual.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            in_section = stripped.lstrip("#").strip().lower() == "excluded topics"
+            continue
+        if in_section and stripped.startswith("- "):
+            item = stripped[2:].strip().strip("`'\"")
+            item = " ".join(item.replace("-", " ").split()).lower()
+            if item:
+                excluded.add(item)
+    return excluded
+
+
 def update_briefing(ranked):
     if not BRIEFING_INTERESTS.exists():
         print(f"[skip] Briefing interests file not found: {BRIEFING_INTERESTS}")
         return
-    top = [t for t, _ in ranked[:TOP_QUERIES]]
+    text = read_text_any(BRIEFING_INTERESTS)
+    if "\x00" in text:
+        # An encoding read_text_any did not recognise. Writing now would put the
+        # mojibake back on disk and take the user's manual queries with it.
+        print(f"[skip] {BRIEFING_INTERESTS} is not readable as text — left untouched.")
+        print("       Re-save it as UTF-8 and run this again.")
+        return
+
+    # "그건 추천하지 마" must stick: a topic the user excluded stays out of the
+    # AUTO block even while its tag keeps scoring high in the wiki. Without
+    # this, excluded topics reappear every scan and hold top-N slots that the
+    # briefing then filters away, shrinking what it actually searches.
+    excluded = parse_excluded(text)
+    top, skipped = [], 0
+    for t, _ in ranked:
+        if " ".join(t.replace("-", " ").split()) in excluded:
+            skipped += 1
+            continue
+        top.append(t)
+        if len(top) == TOP_QUERIES:
+            break
+
     block_lines = [
         AUTO_START,
         f"<!-- regenerated {date.today().isoformat()} by scan_interests.py — edits inside this block are overwritten -->",
@@ -273,13 +319,6 @@ def update_briefing(ranked):
     block_lines.append(AUTO_END)
     block = "\n".join(block_lines)
 
-    text = read_text_any(BRIEFING_INTERESTS)
-    if "\x00" in text:
-        # An encoding read_text_any did not recognise. Writing now would put the
-        # mojibake back on disk and take the user's manual queries with it.
-        print(f"[skip] {BRIEFING_INTERESTS} is not readable as text — left untouched.")
-        print("       Re-save it as UTF-8 and run this again.")
-        return
     if AUTO_START in text and AUTO_END in text:
         text = re.sub(
             re.escape(AUTO_START) + r".*?" + re.escape(AUTO_END),
@@ -290,7 +329,8 @@ def update_briefing(ranked):
     else:
         text = text.rstrip() + "\n\n" + block + "\n"
     BRIEFING_INTERESTS.write_text(text, encoding="utf-8")
-    print(f"[ok] Updated briefing AUTO block with {len(top)} topics.")
+    note = f" ({skipped} excluded)" if skipped else ""
+    print(f"[ok] Updated briefing AUTO block with {len(top)} topics{note}.")
 
 
 def main():
