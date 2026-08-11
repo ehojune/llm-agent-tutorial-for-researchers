@@ -79,6 +79,13 @@ lines you write about them are true. Five abstracts costs one request.
    mornings running. Drop
    correction/erratum/retraction notices. Prefer papers matching more than one topic.
 
+   **Spread them across topics: at most 2 from any single topic while another topic still has
+   an unused candidate.** Interests differ wildly in publication volume, so taking the newest
+   five outright hands the whole briefing to the busiest one — a run of four materials-science
+   seed queries returned four of its five papers from a single topic, and the reader sees a
+   single-subject digest with no sign the other subjects were searched at all. Only once the
+   other topics are exhausted should one supply three or more.
+
    Once the five are chosen — and only then — fetch their abstracts in a single call:
 
    ```
